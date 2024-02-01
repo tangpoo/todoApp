@@ -8,7 +8,6 @@ import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name = "users")
 public class User {
