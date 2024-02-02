@@ -5,6 +5,7 @@ import com.sparta.todoapp.dto.LoginRequestDto;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -49,9 +51,15 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("successfulAuthentication");
         String username = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
         UserRoleEnum role = ((UserDetailsImpl) authResult.getPrincipal()).getUser().getRole();
-
         String token = jwtUtil.createToken(username, role);
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        try {
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+            Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token);
+
+            response.addCookie(cookie);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

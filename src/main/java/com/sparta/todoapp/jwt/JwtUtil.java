@@ -4,12 +4,15 @@ import com.sparta.todoapp.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -53,9 +56,19 @@ public class JwtUtil {
 
     // header 에서 JWT 가져오기
     public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
+        Cookie[] cookies = request.getCookies();
+
+        if(cookies != null){
+            for(Cookie cookie : cookies){
+                log.info(cookie.getName());
+                if(cookie.getName().equals(AUTHORIZATION_HEADER)){
+                    try {
+                        return URLDecoder.decode(cookie.getValue(), "UTF-8");
+                    } catch(UnsupportedEncodingException e){
+                        return null;
+                    }
+                }
+            }
         }
         return null;
     }
