@@ -1,16 +1,16 @@
 package com.sparta.todoapp.controller;
 
+import com.sparta.todoapp.dto.LoginRequestDto;
 import com.sparta.todoapp.dto.SignupRequestDto;
 import com.sparta.todoapp.dto.UserInfoDto;
-import com.sparta.todoapp.security.UserDetailsImpl;
 import com.sparta.todoapp.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -42,14 +42,8 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/user/info")
-    @ResponseBody
-    public ResponseEntity<UserInfoDto> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        String username = userDetails.getUser().getUsername();
-        String email = userDetails.getUser().getEmail();
-
-        UserInfoDto userInfoDto = new UserInfoDto(username, email);
-
-        return new ResponseEntity<>(userInfoDto, HttpStatus.OK);
+    @PostMapping("/user/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto requestDto, HttpServletResponse res){
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
