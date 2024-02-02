@@ -2,6 +2,7 @@ package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.dto.LoginRequestDto;
 import com.sparta.todoapp.dto.SignupRequestDto;
+import com.sparta.todoapp.dto.SignupResponseDto;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
@@ -24,7 +25,7 @@ public class UserService {
 
     private final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public void signup(SignupRequestDto requestDto) {
+    public SignupResponseDto signup(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
@@ -49,9 +50,11 @@ public class UserService {
 
         User user = new User(username, password, email, role);
         userRepository.save(user);
+
+        return new SignupResponseDto(user);
     }
 
-    public void login(LoginRequestDto requestDto, HttpServletResponse res){
+    public String login(LoginRequestDto requestDto){
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
@@ -63,7 +66,6 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
-        jwtUtil.addJwtToCookie(token, res);
+        return jwtUtil.createToken(user.getUsername(), user.getRole());
     }
 }

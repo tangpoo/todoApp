@@ -16,8 +16,8 @@ public class ScheduleService {
     private ScheduleRepository scheduleRepository;
     private JwtUtil jwtUtil;
 
-    public void createSchedule(ScheduleRequestDto requestDto, Cookie cookie) {
-
-        Schedule schedule = scheduleRepository.save(new Schedule(requestDto, ));
-    }
+//    public void createSchedule(ScheduleRequestDto requestDto, Cookie cookie) {
+//
+//        Schedule schedule = scheduleRepository.save(new Schedule(requestDto));
+//    }
 }
