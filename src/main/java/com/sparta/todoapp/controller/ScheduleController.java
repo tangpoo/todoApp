@@ -32,11 +32,19 @@ public class ScheduleController {
         return ResponseEntity.ok().body(new ResponseDto("할일카드 작성 성공", scheduleResponseDto));
     }
 
-    @GetMapping("/schedules/{id}")
+    @GetMapping("/schedule/{id}")
     public ResponseEntity<ResponseDto> getScheduleById(@PathVariable Long id){
         log.info("할일카드 조회");
 
         ScheduleResponseDto scheduleResponseDto = scheduleService.getScheduleById(id);
         return ResponseEntity.ok().body(new ResponseDto("할일카드 조회 성공", scheduleResponseDto));
+    }
+
+    @GetMapping("/schedules")
+    public ResponseEntity<ResponseDto> getSchedules(@RequestParam(required = false) String title){
+        log.info("할일카드 목록 조회");
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto("할일카도 목록 조회 성공", scheduleService.getSchedules(title)));
     }
 }

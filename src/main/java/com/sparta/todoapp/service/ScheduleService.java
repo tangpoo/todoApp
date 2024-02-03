@@ -1,5 +1,6 @@
 package com.sparta.todoapp.service;
 
+import com.sparta.todoapp.dto.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.ScheduleRequestDto;
 import com.sparta.todoapp.dto.ScheduleResponseDto;
 import com.sparta.todoapp.entity.Schedule;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,9 +40,33 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
+    public List<ScheduleListResponseDto> getSchedules(String title) {
+        List<User> users = userRepository.findAll();
+        List<ScheduleListResponseDto> scheduleList = users.stream().map(ScheduleListResponseDto::new).toList();
+
+        if(title == null){
+            return scheduleList;
+        }
+
+        return getSchedulesByTitle(scheduleList, title);
+    }
+
+    private List<ScheduleListResponseDto> getSchedulesByTitle(List<ScheduleListResponseDto> scheduleList, String title) {
+        return scheduleList.stream()
+                .map(schedules -> {
+                    List<ScheduleResponseDto> filteredSchedule = schedules.getSchedules().stream()
+                            .filter(schedule -> schedule.getTitle().equals(title))
+                            .toList();
+                    return new ScheduleListResponseDto(schedules.getAuthor(), filteredSchedule);
+                })
+                .toList();
+    }
+
     private Schedule findSchedule(Long id){
         return scheduleRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("일정이 존재하지 않습니다.")
         );
     }
+
+
 }
