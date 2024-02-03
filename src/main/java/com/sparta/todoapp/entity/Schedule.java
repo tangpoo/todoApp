@@ -20,7 +20,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String title;
@@ -44,14 +44,14 @@ public class Schedule {
     private User user;
 
     public Schedule(ScheduleRequestDto requestDto, User user) {
-        this.title = title;
-        this.content = content;
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
         this.isCompleted = false;
         this.isPrivate = false;
         this.user = user;
     }
 
-    public void update(ScheduleRequestDto requestDto){
+    public void update(ScheduleRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
