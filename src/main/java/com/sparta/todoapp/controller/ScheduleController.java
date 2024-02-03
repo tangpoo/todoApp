@@ -9,7 +9,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,5 +64,16 @@ public class ScheduleController {
         ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(accessToken, requestDto, id, isCompleted, isPrivate);
 
         return ResponseEntity.ok().body(new ResponseDto("할일카드 수정 성공", scheduleResponseDto));
+    }
+
+    @DeleteMapping("/schedule/delete/{id}")
+    public ResponseEntity<ResponseDto> deleteSchedule(
+            @RequestHeader(value = "Authorization") String accessToken,
+            @PathVariable Long id){
+        log.info("할일카드 삭제");
+
+        scheduleService.deleteSchedule(accessToken, id);
+
+        return ResponseEntity.noContent().build();
     }
 }

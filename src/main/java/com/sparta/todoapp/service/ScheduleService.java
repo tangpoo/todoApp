@@ -79,6 +79,13 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
+    @Transactional
+    public void deleteSchedule(String accessToken, Long id) {
+        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+
+        scheduleRepository.delete(schedule);
+    }
+
     private Schedule findSchedule(Long id){
         return scheduleRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("일정이 존재하지 않습니다.")
@@ -99,5 +106,4 @@ public class ScheduleService {
                 .orElseThrow(() -> new NoSuchElementException("작성자만 삭제/수정할 수 있습니다.")
                 );
     }
-
 }
