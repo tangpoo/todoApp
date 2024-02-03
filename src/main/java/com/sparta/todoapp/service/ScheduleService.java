@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -62,11 +63,41 @@ public class ScheduleService {
                 .toList();
     }
 
+    @Transactional
+    public ScheduleResponseDto updateSchedule(String accessToken, ScheduleRequestDto requestDto, Long id, boolean isCompleted, boolean isPrivate) {
+        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+
+        if(isCompleted){
+            schedule.changeIsCompleted(isCompleted);
+        }
+
+        if(isPrivate){
+            schedule.changeIsPrivate(isPrivate);
+        }
+
+        schedule.update(requestDto);
+        return new ScheduleResponseDto(schedule);
+    }
+
     private Schedule findSchedule(Long id){
         return scheduleRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("일정이 존재하지 않습니다.")
         );
     }
 
+    private Schedule getScheduleByTokenAndId(String accessToken, Long id) {
+        String author = jwtUtil.getUserInfoFromToken(accessToken);
+        User user = userRepository.findByUsername(author).orElseThrow();
+
+        return getScheduleByAuthor(user, id);
+    }
+
+    private Schedule getScheduleByAuthor(User user, Long id) {
+        return user.getSchedules().stream()
+                .filter(schedule -> schedule.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("작성자만 삭제/수정할 수 있습니다.")
+                );
+    }
 
 }

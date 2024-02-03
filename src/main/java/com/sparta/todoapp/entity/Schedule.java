@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Table(name = "schedule")
@@ -54,5 +53,13 @@ public class Schedule {
     public void update(ScheduleRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
+    }
+
+    public void changeIsCompleted(boolean isCompleted){
+        this.isCompleted = isCompleted;
+    }
+
+    public void changeIsPrivate(boolean isPrivate){
+        this.isPrivate = isPrivate;
     }
 }
