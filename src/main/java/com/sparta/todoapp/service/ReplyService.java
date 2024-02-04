@@ -10,7 +10,10 @@ import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.NotAcceptableStatusException;
 
 import java.util.NoSuchElementException;
 
@@ -23,6 +26,7 @@ public class ReplyService {
     private final ReplyRepository replyRepository;
     private final JwtUtil jwtUtil;
 
+    @Transactional
     public ReplyResponseDto createReply(String accessToken, ReplyRequestDto requestDto, Long id) {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
 
@@ -36,5 +40,39 @@ public class ReplyService {
         Reply reply = new Reply(requestDto, schedule, user);
 
         return new ReplyResponseDto(replyRepository.save(reply));
+    }
+
+    @Transactional
+    public ReplyResponseDto updateReply(String accessToken, ReplyRequestDto requestDto, Long scheduleId, Long replyId) {
+        String author = jwtUtil.getUserInfoFromToken(accessToken);
+
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new NotAcceptableStatusException("댓글이 존재하지 않습니다."));
+
+        scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
+
+        if(!author.equals(reply.getUser().getUsername())) {
+            throw new AccessDeniedException("작성자만 수정할 수 있습니다.");
+        }
+
+        reply.update(requestDto);
+        return new ReplyResponseDto(reply);
+    }
+
+    public void deleteReply(String accessToken, Long scheduleId, Long replyId) {
+        String author = jwtUtil.getUserInfoFromToken(accessToken);
+
+        Reply reply = replyRepository.findById(replyId)
+                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
+
+        scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
+
+        if(!author.equals(reply.getUser().getUsername())) {
+            throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
+        }
+
+        replyRepository.delete(reply);
     }
 }

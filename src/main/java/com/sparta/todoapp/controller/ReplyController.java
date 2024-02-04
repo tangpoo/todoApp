@@ -35,5 +35,24 @@ public class ReplyController {
             @Valid @RequestBody ReplyRequestDto requestDto,
             @PathVariable Long scheduleId,
             @PathVariable Long replyId
-    )
+    ){
+        log.info("댓글 수정");
+
+        ReplyResponseDto responseDto = replyService.updateReply(accessToken, requestDto, scheduleId, replyId);
+
+        return ResponseEntity.ok().body(new ResponseDto("댓글 수정 성공", responseDto));
+    }
+
+    @DeleteMapping("/{scheduleId}/reply/delete/{replyId}")
+    public ResponseEntity<ResponseDto> deleteReply(
+            @RequestHeader(value = "Authorization") String accessToken,
+            @PathVariable Long scheduleId,
+            @PathVariable Long replyId
+    ){
+        log.info("댓글 삭제");
+
+        replyService.deleteReply(accessToken, scheduleId, replyId);
+
+        return ResponseEntity.ok().body(new ResponseDto("댓글 삭제 성공"));
+    }
 }
