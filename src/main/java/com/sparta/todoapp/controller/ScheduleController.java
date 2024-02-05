@@ -36,10 +36,12 @@ public class ScheduleController {
     }
 
     @GetMapping("/schedule/{id}")
-    public ResponseEntity<ResponseDto> getScheduleById(@PathVariable Long id){
+    public ResponseEntity<ResponseDto> getScheduleById(
+            @RequestHeader(value = "Authorization") String accessToken,
+            @PathVariable Long id){
         log.info("할일카드 조회");
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.getScheduleById(id);
+        ScheduleResponseDto scheduleResponseDto = scheduleService.getScheduleById(accessToken, id);
 
 
         return ResponseEntity.ok().body(new ResponseDto("할일카드 조회 성공", scheduleResponseDto));
@@ -84,11 +86,12 @@ public class ScheduleController {
     public ResponseEntity<ResponseDto> completedSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
             @PathVariable Long id,
-            @RequestParam boolean isPrivate
+            @RequestParam(required = false) boolean isCompleted,
+            @RequestParam(required = false) boolean isPrivate
     ){
         log.info("할일카드 완료");
 
-        scheduleService.completedSchedule(accessToken, id, isPrivate);
+        scheduleService.completedSchedule(accessToken, id, isCompleted, isPrivate);
 
         return ResponseEntity.noContent().build();
     }

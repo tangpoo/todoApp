@@ -59,7 +59,7 @@ public class UserService {
         String password = requestDto.getPassword();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
+                () -> new IllegalArgumentException("등록된 회원이 없습니다.")
         );
 
         if(!passwordEncoder.matches(password, user.getPassword())){

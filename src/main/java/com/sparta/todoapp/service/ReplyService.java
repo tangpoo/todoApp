@@ -31,10 +31,10 @@ public class ReplyService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
 
         User user = userRepository.findByUsername(author)
-                .orElseThrow(() -> new NoSuchElementException("유저를 찾지 못했습니다.")
+                .orElseThrow(() -> new NoSuchElementException("회원을 찾지 못했습니다.")
                 );
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("할일카드를 찾지 못했습니다.")
+                .orElseThrow(() -> new NoSuchElementException("일정을 찾지 못했습니다.")
                 );
 
         Reply reply = new Reply(requestDto, schedule, user);

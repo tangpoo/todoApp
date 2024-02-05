@@ -3,9 +3,11 @@ package com.sparta.todoapp.service;
 import com.sparta.todoapp.dto.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.ScheduleRequestDto;
 import com.sparta.todoapp.dto.ScheduleResponseDto;
+import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.jwt.JwtUtil;
+import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,9 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +24,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final ReplyRepository replyRepository;
     private final JwtUtil jwtUtil;
 
     @Transactional
@@ -35,10 +36,24 @@ public class ScheduleService {
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
     }
 
-    public ScheduleResponseDto getScheduleById(Long id) {
-        Schedule schedule = findSchedule(id);
+    public ScheduleResponseDto getScheduleById(String accessToken, Long id) {
+        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+        List<Reply> replies = replyRepository.findAllByScheduleId(schedule.getId());
+
+        if(replies.size() > 0){
+            return new ScheduleResponseDto(schedule, getReplyList(replies));
+        }
 
         return new ScheduleResponseDto(schedule);
+    }
+
+    private Map<Long, String> getReplyList(List<Reply> replies) {
+        Map<Long, String> replyList = new LinkedHashMap<>();
+        for(Reply reply : replies){
+            replyList.put(reply.getId(), reply.getContent());
+        }
+
+        return replyList;
     }
 
     public ScheduleListResponseDto getSchedules(String accessToken) {
@@ -74,16 +89,17 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void completedSchedule(String accessToken, Long id, boolean isCompleted) {
+    public void completedSchedule(String accessToken, Long id, boolean isCompleted, boolean isPrivate) {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
 
-        schedule.changeIsCompleted(isCompleted);
-    }
+        if(isCompleted){
+            schedule.changeIsCompleted(isCompleted);
+        }
 
-    private Schedule findSchedule(Long id){
-        return scheduleRepository.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("일정이 존재하지 않습니다.")
-        );
+        if(isPrivate){
+            schedule.changeIsPrivate(isPrivate);
+        }
+
     }
 
     private Schedule getScheduleByTokenAndId(String accessToken, Long id) {
