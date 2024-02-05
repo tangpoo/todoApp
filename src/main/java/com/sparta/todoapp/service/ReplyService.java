@@ -47,7 +47,7 @@ public class ReplyService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
 
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new NotAcceptableStatusException("댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
 
         scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
