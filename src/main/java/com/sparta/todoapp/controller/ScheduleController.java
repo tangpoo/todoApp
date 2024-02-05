@@ -40,15 +40,18 @@ public class ScheduleController {
         log.info("할일카드 조회");
 
         ScheduleResponseDto scheduleResponseDto = scheduleService.getScheduleById(id);
+
+
         return ResponseEntity.ok().body(new ResponseDto("할일카드 조회 성공", scheduleResponseDto));
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<ResponseDto> getSchedules(@RequestParam(required = false) String title){
+    public ResponseEntity<ResponseDto> getSchedules(
+            @RequestHeader(value = "Authorization") String accessToken){
         log.info("할일카드 목록 조회");
 
         return ResponseEntity.ok()
-                .body(new ResponseDto("할일카도 목록 조회 성공", scheduleService.getSchedules(title)));
+                .body(new ResponseDto("할일카드 목록 조회 성공", scheduleService.getSchedules(accessToken)));
     }
 
     @PatchMapping("/schedule/update/{id}")

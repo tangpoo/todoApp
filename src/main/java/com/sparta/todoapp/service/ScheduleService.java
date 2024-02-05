@@ -41,26 +41,13 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    public List<ScheduleListResponseDto> getSchedules(String title) {
-        List<User> users = userRepository.findAll();
-        List<ScheduleListResponseDto> scheduleList = users.stream().map(ScheduleListResponseDto::new).toList();
+    public ScheduleListResponseDto getSchedules(String accessToken) {
+        String author = jwtUtil.getUserInfoFromToken(accessToken);
+        User user = userRepository.findByUsername(author).orElseThrow();
 
-        if(title == null){
-            return scheduleList;
-        }
+        List<Schedule> schedules = scheduleRepository.findAllByUserId(user.getId()).orElseThrow();
 
-        return getSchedulesByTitle(scheduleList, title);
-    }
-
-    private List<ScheduleListResponseDto> getSchedulesByTitle(List<ScheduleListResponseDto> scheduleList, String title) {
-        return scheduleList.stream()
-                .map(schedules -> {
-                    List<ScheduleResponseDto> filteredSchedule = schedules.getSchedules().stream()
-                            .filter(schedule -> schedule.getTitle().equals(title))
-                            .toList();
-                    return new ScheduleListResponseDto(schedules.getAuthor(), filteredSchedule);
-                })
-                .toList();
+        return new ScheduleListResponseDto(user.getUsername(), schedules.stream().map(ScheduleResponseDto::new).toList());
     }
 
     @Transactional
@@ -96,14 +83,7 @@ public class ScheduleService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
         User user = userRepository.findByUsername(author).orElseThrow();
 
-        return getScheduleByAuthor(user, id);
-    }
-
-    private Schedule getScheduleByAuthor(User user, Long id) {
-        return user.getSchedules().stream()
-                .filter(schedule -> schedule.getId().equals(id))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("작성자만 삭제/수정할 수 있습니다.")
-                );
+        return scheduleRepository.findByIdAndUserId(id, user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("일정이 존재하지 않습니다."));
     }
 }

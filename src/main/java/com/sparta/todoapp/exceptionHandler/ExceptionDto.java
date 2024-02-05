@@ -1,4 +1,4 @@
-package com.sparta.todoapp.dto;
+package com.sparta.todoapp.exceptionHandler;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

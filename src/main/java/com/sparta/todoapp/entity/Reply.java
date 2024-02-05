@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Table(name = "REPLY")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
-public class Reply {
+public class Reply extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +23,6 @@ public class Reply {
 
     @Column(length = 512)
     private String content;
-
-    @Column
-    @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

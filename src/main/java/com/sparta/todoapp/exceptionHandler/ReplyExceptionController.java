@@ -1,6 +1,5 @@
 package com.sparta.todoapp.exceptionHandler;
 
-import com.sparta.todoapp.dto.ExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

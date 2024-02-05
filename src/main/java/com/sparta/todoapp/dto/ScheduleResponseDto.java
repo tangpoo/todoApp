@@ -22,7 +22,7 @@ public class ScheduleResponseDto {
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
         this.author = schedule.getUser().getUsername();
-        this.date = schedule.getDate();
+        this.date = schedule.getCreatedAt();
         this.isCompleted = schedule.isCompleted();
         this.isPrivate = schedule.isPrivate();
     }

@@ -12,10 +12,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Table(name = "schedule")
-public class Schedule {
+public class Schedule extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,11 +25,6 @@ public class Schedule {
 
     @Column(nullable = false, length = 1024)
     private String content;
-
-    @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "DATE_CREATED", nullable = false)
-    private LocalDateTime date;
 
     @Column(name = "IS_COMPLETED")
     private boolean isCompleted;

@@ -12,11 +12,8 @@ public class ScheduleListResponseDto {
     private String author;
     private List<ScheduleResponseDto> schedules;
 
-    public ScheduleListResponseDto(User user) {
-        this.author = user.getUsername();
-        this.schedules = user.getSchedules().stream()
-                .map(ScheduleResponseDto::new)
-                .toList();
+    public ScheduleListResponseDto(List<ScheduleResponseDto> list) {
+        this.schedules = list;
     }
 
     public ScheduleListResponseDto(String author, List<ScheduleResponseDto> schedules) {

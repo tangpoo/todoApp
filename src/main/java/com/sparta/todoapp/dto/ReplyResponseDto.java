@@ -16,6 +16,6 @@ public class ReplyResponseDto {
     public ReplyResponseDto(Reply reply) {
         this.id = reply.getId();
         this.content = reply.getContent();
-        this.date = reply.getDate();
+        this.date = reply.getCreatedAt();
     }
 }
