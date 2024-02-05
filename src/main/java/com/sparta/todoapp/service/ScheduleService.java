@@ -45,7 +45,7 @@ public class ScheduleService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
         User user = userRepository.findByUsername(author).orElseThrow();
 
-        List<Schedule> schedules = scheduleRepository.findAllByUserId(user.getId()).orElseThrow();
+        List<Schedule> schedules = scheduleRepository.findAllByUserIdOrderByIsCompletedAscModifiedAtDesc(user.getId()).orElseThrow();
 
         return new ScheduleListResponseDto(user.getUsername(), schedules.stream().map(ScheduleResponseDto::new).toList());
     }
@@ -71,6 +71,13 @@ public class ScheduleService {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
 
         scheduleRepository.delete(schedule);
+    }
+
+    @Transactional
+    public void completedSchedule(String accessToken, Long id, boolean isCompleted) {
+        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+
+        schedule.changeIsCompleted(isCompleted);
     }
 
     private Schedule findSchedule(Long id){

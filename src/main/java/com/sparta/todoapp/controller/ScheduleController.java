@@ -79,4 +79,17 @@ public class ScheduleController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/schedule/completed/{id}")
+    public ResponseEntity<ResponseDto> completedSchedule(
+            @RequestHeader(value = "Authorization") String accessToken,
+            @PathVariable Long id,
+            @RequestParam boolean isPrivate
+    ){
+        log.info("할일카드 완료");
+
+        scheduleService.completedSchedule(accessToken, id, isPrivate);
+
+        return ResponseEntity.noContent().build();
+    }
 }
