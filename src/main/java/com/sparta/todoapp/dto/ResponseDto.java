@@ -1,19 +1,12 @@
 package com.sparta.todoapp.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class ResponseDto {
+@Builder
+public class ResponseDto<T> {
     private String message;
-    private Object data;
+    private T data;
 
-    public ResponseDto(String message) {
-        this.message = message;
-    }
 }
