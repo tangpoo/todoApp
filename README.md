@@ -11,7 +11,7 @@ tangpoo의 개인프로젝트 todoApp 의 README 입니다.
 
 ---
 
-![Postman API 명세서](https://documenter.getpostman.com/view/32381127/2s9YyweKDA)
+[Postman API 명세서](https://documenter.getpostman.com/view/32381127/2s9YyweKDA)
 
 
 
