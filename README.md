@@ -7,7 +7,7 @@
 
 ---
 
-[ERD](https://github.com/tangpoo/todoApp/assets/131866367/3caafaab-5779-4b17-aace-80f1ab06cc91)
+![ERD](https://github.com/tangpoo/todoApp/assets/131866367/3caafaab-5779-4b17-aace-80f1ab06cc91)
 
 ---
 
@@ -16,4 +16,4 @@
 ---
 
 ## Tools
-[img](#6DB33F)
+![img](#6DB33F)
