@@ -21,12 +21,12 @@ import static com.sparta.todoapp.message.UserMessage.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/user/signup")
+    @PostMapping("/signup")
     @Operation(summary = SIGN_UP_API)
     public ResponseEntity<ResponseDto<SignupResponseDto>> signup(@Valid @RequestBody SignupRequestDto requestDto){
         log.info(SIGN_UP_API);
@@ -37,7 +37,7 @@ public class UserController {
                         .build());
     }
 
-    @PostMapping("/user/login")
+    @PostMapping("/login")
     @Operation(summary = LOGIN_API)
     public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto requestDto){
         log.info(LOGIN_API);

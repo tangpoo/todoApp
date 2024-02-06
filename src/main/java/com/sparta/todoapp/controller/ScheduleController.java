@@ -20,7 +20,7 @@ import static com.sparta.todoapp.message.ScheduleMessage.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/schedule")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
@@ -41,7 +41,7 @@ public class ScheduleController {
                         .build());
     }
 
-    @GetMapping("/schedule/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = GET_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> getScheduleById(
             @RequestHeader(value = "Authorization") String accessToken,
@@ -68,7 +68,7 @@ public class ScheduleController {
                         .build());
     }
 
-    @PatchMapping("/schedule/update/{id}")
+    @PatchMapping("/update/{id}")
     @Operation(summary = PATCH_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> updateSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
@@ -88,7 +88,7 @@ public class ScheduleController {
                         .build());
     }
 
-    @PatchMapping("/schedule/completed/{id}")
+    @PatchMapping("/completed/{id}")
     @Operation(summary = PATCH_SCHEDULE_CHECK_API, description = PATCH_SCHEDULE_CHECK_DESCRIPTION)
     public ResponseEntity<Void> completedSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
@@ -103,7 +103,7 @@ public class ScheduleController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/schedule/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     @Operation(summary = DELETE_SCHEDULE_API)
     public ResponseEntity<Void> deleteSchedule(
             @RequestHeader(value = "Authorization") String accessToken,

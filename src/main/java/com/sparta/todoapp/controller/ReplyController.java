@@ -19,12 +19,12 @@ import static com.sparta.todoapp.message.ReplyMessage.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/schedules/schedule")
+@RequestMapping("/api/schedule")
 public class ReplyController {
 
     private final ReplyService replyService;
 
-    @PostMapping("/{scheduleId}/reply/new")
+    @PostMapping("/{scheduleId}/new")
     @Operation(summary = CREATE_REPLY_API)
     public ResponseEntity<ResponseDto<ReplyResponseDto>> createReply(
             @RequestHeader(value = "Authorization") String accessToken,
@@ -41,7 +41,7 @@ public class ReplyController {
                         .build());
     }
 
-    @PatchMapping("/{scheduleId}/reply/update/{replyId}")
+    @PatchMapping("/{scheduleId}/update/{replyId}")
     @Operation(summary = PATCH_REPLY_API)
     public ResponseEntity<ResponseDto<ReplyResponseDto>> updateReply(
             @RequestHeader(value = "Authorization") String accessToken,
@@ -60,7 +60,7 @@ public class ReplyController {
                         .build());
     }
 
-    @DeleteMapping("/{scheduleId}/reply/delete/{replyId}")
+    @DeleteMapping("/{scheduleId}/delete/{replyId}")
     @Operation(summary = DELETE_REPLY_API)
     public ResponseEntity<Void> deleteReply(
             @RequestHeader(value = "Authorization") String accessToken,

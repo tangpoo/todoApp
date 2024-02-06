@@ -4,6 +4,8 @@ import com.sparta.todoapp.dto.reply.ReplyRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -26,6 +28,7 @@ public class Reply extends TimeStamped{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Schedule schedule;
 
     public Reply(ReplyRequestDto requestDto, Schedule schedule, User user) {
