@@ -1,4 +1,4 @@
-package com.sparta.todoapp.dto;
+package com.sparta.todoapp.dto.schedule;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

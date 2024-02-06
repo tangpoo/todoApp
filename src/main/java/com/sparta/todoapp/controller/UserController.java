@@ -2,8 +2,8 @@ package com.sparta.todoapp.controller;
 
 import com.sparta.todoapp.dto.LoginRequestDto;
 import com.sparta.todoapp.dto.ResponseDto;
-import com.sparta.todoapp.dto.SignupRequestDto;
-import com.sparta.todoapp.dto.SignupResponseDto;
+import com.sparta.todoapp.dto.signup.SignupRequestDto;
+import com.sparta.todoapp.dto.signup.SignupResponseDto;
 import com.sparta.todoapp.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

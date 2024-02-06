@@ -1,26 +1,20 @@
 package com.sparta.todoapp.controller;
 
 import com.sparta.todoapp.dto.ResponseDto;
-import com.sparta.todoapp.dto.ScheduleListResponseDto;
-import com.sparta.todoapp.dto.ScheduleRequestDto;
-import com.sparta.todoapp.dto.ScheduleResponseDto;
-import com.sparta.todoapp.entity.Schedule;
+import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
+import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
+import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.connector.Response;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
-import static com.sparta.todoapp.jwt.JwtUtil.AUTHORIZATION_HEADER;
 import static com.sparta.todoapp.message.ScheduleMessage.*;
 
 @Slf4j

@@ -1,14 +1,10 @@
 package com.sparta.todoapp.entity;
 
-import com.sparta.todoapp.dto.ReplyRequestDto;
+import com.sparta.todoapp.dto.reply.ReplyRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter

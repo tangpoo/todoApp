@@ -1,15 +1,13 @@
 package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.dto.LoginRequestDto;
-import com.sparta.todoapp.dto.SignupRequestDto;
-import com.sparta.todoapp.dto.SignupResponseDto;
+import com.sparta.todoapp.dto.signup.SignupRequestDto;
+import com.sparta.todoapp.dto.signup.SignupResponseDto;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
 import com.sparta.todoapp.entity.User;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

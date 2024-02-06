@@ -1,6 +1,5 @@
-package com.sparta.todoapp.dto;
+package com.sparta.todoapp.dto.schedule;
 
-import com.sparta.todoapp.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,7 +1,7 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.dto.ReplyRequestDto;
-import com.sparta.todoapp.dto.ReplyResponseDto;
+import com.sparta.todoapp.dto.reply.ReplyRequestDto;
+import com.sparta.todoapp.dto.reply.ReplyResponseDto;
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.entity.User;
@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.NotAcceptableStatusException;
 
 import java.util.NoSuchElementException;
 

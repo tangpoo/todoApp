@@ -1,7 +1,7 @@
 package com.sparta.todoapp.controller;
 
-import com.sparta.todoapp.dto.ReplyRequestDto;
-import com.sparta.todoapp.dto.ReplyResponseDto;
+import com.sparta.todoapp.dto.reply.ReplyRequestDto;
+import com.sparta.todoapp.dto.reply.ReplyResponseDto;
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.service.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,4 +1,4 @@
-package com.sparta.todoapp.dto;
+package com.sparta.todoapp.dto.signup;
 
 
 import jakarta.validation.constraints.Email;

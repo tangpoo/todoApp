@@ -1,4 +1,4 @@
-package com.sparta.todoapp.dto;
+package com.sparta.todoapp.dto.schedule;
 
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;

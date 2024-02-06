@@ -1,8 +1,8 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.dto.ScheduleListResponseDto;
-import com.sparta.todoapp.dto.ScheduleRequestDto;
-import com.sparta.todoapp.dto.ScheduleResponseDto;
+import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
+import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
+import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.entity.User;
@@ -11,7 +11,6 @@ import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
