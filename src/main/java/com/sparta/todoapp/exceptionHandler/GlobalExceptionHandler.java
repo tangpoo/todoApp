@@ -1,12 +1,12 @@
 package com.sparta.todoapp.exceptionHandler;
 
-import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
@@ -20,21 +20,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ExceptionDto> NoSuchElementException(NoSuchElementException e){
+    public ResponseEntity<ExceptionDto> NoSuchElementException(NoSuchElementException e) {
         return ResponseEntity.badRequest()
                 .body(new ExceptionDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND,
                         e.getMessage()));
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ExceptionDto> EntityNotFoundException(EntityNotFoundException e){
-        return ResponseEntity.badRequest()
-                .body(new ExceptionDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND,
-                        e.getMessage()));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionDto> IllegalArgumentException(IllegalArgumentException e){
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ExceptionDto> DataIntegrityViolationException(IllegalArgumentException e) {
         return ResponseEntity.badRequest()
                 .body(new ExceptionDto(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT,
                         e.getMessage()));

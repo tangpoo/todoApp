@@ -3,14 +3,17 @@ package com.sparta.todoapp.service;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
+import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
-import com.sparta.todoapp.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -28,20 +31,20 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         Optional<User> checkUsername = userRepository.findByUsername(username);
-        if(checkUsername.isPresent()){
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        if (checkUsername.isPresent()) {
+            throw new DataIntegrityViolationException("중복된 사용자가 존재합니다.");
         }
 
         String email = requestDto.getEmail();
         Optional<User> checkEmail = userRepository.findByEmail(email);
-        if(checkEmail.isPresent()){
-            throw new IllegalArgumentException("중복된 Email 입니다.");
+        if (checkEmail.isPresent()) {
+            throw new DataIntegrityViolationException("중복된 Email 입니다.");
         }
 
         UserRoleEnum role = UserRoleEnum.USER;
         if (requestDto.isAdmin()) {
             if (!ADMIN_TOKEN.equals(requestDto.getAdminToken())) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+                throw new AccessDeniedException("관리자 암호가 틀려 등록이 불가능합니다.");
             }
             role = UserRoleEnum.ADMIN;
         }
@@ -52,16 +55,16 @@ public class UserService {
         return new SignupResponseDto(user);
     }
 
-    public String login(LoginRequestDto requestDto){
+    public String login(LoginRequestDto requestDto) {
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 회원이 없습니다.")
+                () -> new NoSuchElementException("등록된 회원이 없습니다.")
         );
 
-        if(!passwordEncoder.matches(password, user.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new AccessDeniedException("비밀번호가 일치하지 않습니다.");
         }
 
         return jwtUtil.createToken(user.getUsername(), user.getRole());

@@ -10,12 +10,14 @@ import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class ScheduleService {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
         List<Reply> replies = replyRepository.findAllByScheduleId(schedule.getId());
 
-        if(replies.size() > 0){
+        if (replies.size() > 0) {
             return new ScheduleResponseDto(schedule, getReplyList(replies));
         }
 
@@ -48,7 +50,7 @@ public class ScheduleService {
 
     private Map<Long, String> getReplyList(List<Reply> replies) {
         Map<Long, String> replyList = new LinkedHashMap<>();
-        for(Reply reply : replies){
+        for (Reply reply : replies) {
             replyList.put(reply.getId(), reply.getContent());
         }
 
@@ -68,11 +70,11 @@ public class ScheduleService {
     public ScheduleResponseDto updateSchedule(String accessToken, ScheduleRequestDto requestDto, Long id, boolean isCompleted, boolean isPrivate) {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
 
-        if(isCompleted){
+        if (isCompleted) {
             schedule.changeIsCompleted(isCompleted);
         }
 
-        if(isPrivate){
+        if (isPrivate) {
             schedule.changeIsPrivate(isPrivate);
         }
 
@@ -91,11 +93,11 @@ public class ScheduleService {
     public void completedSchedule(String accessToken, Long id, boolean isCompleted, boolean isPrivate) {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
 
-        if(isCompleted){
+        if (isCompleted) {
             schedule.changeIsCompleted(isCompleted);
         }
 
-        if(isPrivate){
+        if (isPrivate) {
             schedule.changeIsPrivate(isPrivate);
         }
 
@@ -106,6 +108,6 @@ public class ScheduleService {
         User user = userRepository.findByUsername(author).orElseThrow();
 
         return scheduleRepository.findByIdAndUserId(id, user.getId())
-                .orElseThrow(() -> new EntityNotFoundException("일정이 존재하지 않습니다."));
+                .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
     }
 }

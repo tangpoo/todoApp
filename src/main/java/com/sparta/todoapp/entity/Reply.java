@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "REPLY")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
-public class Reply extends TimeStamped{
+public class Reply extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Reply extends TimeStamped{
         this.schedule = schedule;
     }
 
-    public void update(ReplyRequestDto requestDto){
+    public void update(ReplyRequestDto requestDto) {
         this.content = requestDto.getContent();
     }
 }

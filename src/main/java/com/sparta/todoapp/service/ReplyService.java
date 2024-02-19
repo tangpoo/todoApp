@@ -51,7 +51,7 @@ public class ReplyService {
         scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
 
-        if(!author.equals(reply.getUser().getUsername())) {
+        if (!author.equals(reply.getUser().getUsername())) {
             throw new AccessDeniedException("작성자만 수정할 수 있습니다.");
         }
 
@@ -68,7 +68,7 @@ public class ReplyService {
         scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
 
-        if(!author.equals(reply.getUser().getUsername())) {
+        if (!author.equals(reply.getUser().getUsername())) {
             throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
         }
 

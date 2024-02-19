@@ -29,7 +29,7 @@ public class ScheduleController {
     @Operation(summary = CREATE_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> createSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
-            @RequestBody ScheduleRequestDto requestDto){
+            @RequestBody ScheduleRequestDto requestDto) {
         log.info(CREATE_SCHEDULE_API);
 
         ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(accessToken, requestDto);
@@ -45,7 +45,7 @@ public class ScheduleController {
     @Operation(summary = GET_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> getScheduleById(
             @RequestHeader(value = "Authorization") String accessToken,
-            @PathVariable Long id){
+            @PathVariable Long id) {
         log.info(GET_SCHEDULE_API);
 
         return ResponseEntity.ok()
@@ -58,7 +58,7 @@ public class ScheduleController {
     @GetMapping("/schedules")
     @Operation(summary = SEARCH_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleListResponseDto>> getSchedules(
-            @RequestHeader(value = "Authorization") String accessToken){
+            @RequestHeader(value = "Authorization") String accessToken) {
         log.info(SEARCH_SCHEDULE_API);
 
         return ResponseEntity.ok()
@@ -76,7 +76,7 @@ public class ScheduleController {
             @PathVariable Long id,
             @RequestParam(required = false) boolean isCompleted,
             @RequestParam(required = false) boolean isPrivate
-    ){
+    ) {
         log.info(PATCH_SCHEDULE_API);
 
         ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(accessToken, requestDto, id, isCompleted, isPrivate);
@@ -95,7 +95,7 @@ public class ScheduleController {
             @PathVariable Long id,
             @RequestParam(required = false) boolean isCompleted,
             @RequestParam(required = false) boolean isPrivate
-    ){
+    ) {
         log.info(PATCH_SCHEDULE_CHECK_API);
 
         scheduleService.completedSchedule(accessToken, id, isCompleted, isPrivate);
@@ -107,7 +107,7 @@ public class ScheduleController {
     @Operation(summary = DELETE_SCHEDULE_API)
     public ResponseEntity<Void> deleteSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
-            @PathVariable Long id){
+            @PathVariable Long id) {
         log.info(DELETE_SCHEDULE_API);
 
         scheduleService.deleteSchedule(accessToken, id);
@@ -115,14 +115,14 @@ public class ScheduleController {
         return ResponseEntity.noContent().build();
     }
 
-    private URI createUri(Long scheduleId){
+    private URI createUri(Long scheduleId) {
         return ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(scheduleId)
                 .toUri();
     }
 
-    private URI updateUri(){
+    private URI updateUri() {
         return ServletUriComponentsBuilder.fromCurrentRequest()
                 .replaceQueryParam("isCompleted")
                 .replaceQueryParam("isPrivate")

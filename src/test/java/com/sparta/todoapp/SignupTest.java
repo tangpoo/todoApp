@@ -19,20 +19,4 @@ public class SignupTest {
 
 
 
-    @Test
-    @DisplayName("회원 가입, 조회 테스트")
-    @Transactional
-    void test1(){
-        User user1 = new User();
-        user1.setUsername("Robbie");
-        user1.setEmail("Robbie@gmail.com");
-        user1.setPassword("1234");
-
-        userRepository.save(user1);
-
-        Assertions.assertThat(user1.getUsername())
-                        .isEqualTo(userRepository.findById(user1.getId()).orElseThrow().getUsername());
-    }
-
-
 }

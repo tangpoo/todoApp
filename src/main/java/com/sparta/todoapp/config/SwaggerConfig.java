@@ -13,7 +13,7 @@ public class SwaggerConfig {
     private static final String description = "Todo Application 의 Swagger 문서입니다.";
 
     @Bean
-    public GroupedOpenApi publicApi(){
+    public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("api")
                 .pathsToMatch("/api/**")
@@ -21,7 +21,7 @@ public class SwaggerConfig {
     }
 
     @Bean
-    public OpenAPI springShopOpenAPI(){
+    public OpenAPI springShopOpenAPI() {
         Info info = new Info().title(title).description(description).version("1.0.0");
 
         return new OpenAPI().info(info);

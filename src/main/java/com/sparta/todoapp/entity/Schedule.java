@@ -11,7 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Getter
 @NoArgsConstructor
 @Table(name = "schedule")
-public class Schedule extends TimeStamped{
+public class Schedule extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,11 +47,11 @@ public class Schedule extends TimeStamped{
         this.content = requestDto.getContent();
     }
 
-    public void changeIsCompleted(boolean isCompleted){
+    public void changeIsCompleted(boolean isCompleted) {
         this.isCompleted = isCompleted;
     }
 
-    public void changeIsPrivate(boolean isPrivate){
+    public void changeIsPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
     }
 }

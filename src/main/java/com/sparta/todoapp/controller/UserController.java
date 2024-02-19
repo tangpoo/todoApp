@@ -1,7 +1,7 @@
 package com.sparta.todoapp.controller;
 
-import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.ResponseDto;
+import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
 import com.sparta.todoapp.service.UserService;
@@ -28,7 +28,7 @@ public class UserController {
 
     @PostMapping("/signup")
     @Operation(summary = SIGN_UP_API)
-    public ResponseEntity<ResponseDto<SignupResponseDto>> signup(@Valid @RequestBody SignupRequestDto requestDto){
+    public ResponseEntity<ResponseDto<SignupResponseDto>> signup(@Valid @RequestBody SignupRequestDto requestDto) {
         log.info(SIGN_UP_API);
         return ResponseEntity.ok()
                 .body(ResponseDto.<SignupResponseDto>builder()
@@ -39,7 +39,7 @@ public class UserController {
 
     @PostMapping("/login")
     @Operation(summary = LOGIN_API)
-    public ResponseEntity<ResponseDto<Void>> login(@RequestBody LoginRequestDto requestDto){
+    public ResponseEntity<ResponseDto<Void>> login(@RequestBody LoginRequestDto requestDto) {
         log.info(LOGIN_API);
         return ResponseEntity.ok()
                 .header(HttpHeaders.AUTHORIZATION, userService.login(requestDto))

@@ -1,14 +1,11 @@
 package com.sparta.todoapp.dto.schedule;
 
-import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 @Getter
