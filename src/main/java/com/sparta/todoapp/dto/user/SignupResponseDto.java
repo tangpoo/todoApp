@@ -1,4 +1,4 @@
-package com.sparta.todoapp.dto.signup;
+package com.sparta.todoapp.dto.user;
 
 import com.sparta.todoapp.entity.User;
 import lombok.Getter;
