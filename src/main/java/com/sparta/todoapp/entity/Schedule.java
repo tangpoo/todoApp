@@ -2,6 +2,8 @@ package com.sparta.todoapp.entity;
 
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -9,6 +11,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Table(name = "schedule")
 public class Schedule extends TimeStamped {
@@ -34,13 +38,6 @@ public class Schedule extends TimeStamped {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    public Schedule(ScheduleRequestDto requestDto, User user) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
-        this.isCompleted = false;
-        this.isPrivate = false;
-        this.user = user;
-    }
 
     public void update(ScheduleRequestDto requestDto) {
         this.title = requestDto.getTitle();
