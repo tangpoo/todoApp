@@ -32,7 +32,11 @@ public class ScheduleService {
     public ScheduleResponseDto createSchedule(String accessToken, ScheduleRequestDto requestDto) {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
         User user = userRepository.findByUsername(author).orElseThrow();
-        Schedule schedule = new Schedule(requestDto, user);
+        Schedule schedule = Schedule.builder()
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .user(user)
+                .build();
 
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
     }
