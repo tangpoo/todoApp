@@ -50,11 +50,11 @@ public class UserService {
         }
 
         User user = User.builder()
-                        .username(username)
-                                .password(password)
-                                        .email(email)
-                                                .role(role)
-                                                        .build();
+                .username(username)
+                .password(password)
+                .email(email)
+                .role(role)
+                .build();
 
         userRepository.save(user);
 

@@ -21,8 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -49,7 +49,7 @@ class ReplyServiceTest {
     @Test
     @Transactional
     @DisplayName("댓글 생성 성공")
-    void test1(){
+    void test1() {
         //given
         ReplyRequestDto requestDto = new ReplyRequestDto();
         requestDto.setContent("test_content");
@@ -87,7 +87,7 @@ class ReplyServiceTest {
     @Test
     @Transactional
     @DisplayName("댓글 생성 유저 조회 실패")
-    void test2(){
+    void test2() {
         ReplyRequestDto requestDto = new ReplyRequestDto();
         requestDto.setContent("test_content");
         String accessToken = "dummy_access_token";
@@ -103,7 +103,7 @@ class ReplyServiceTest {
     @Test
     @Transactional
     @DisplayName("댓글 수정 성공")
-    void test3(){
+    void test3() {
         //given
         ReplyRequestDto requestDto = new ReplyRequestDto();
         requestDto.setContent("test_content");
@@ -143,7 +143,7 @@ class ReplyServiceTest {
     @Test
     @Transactional
     @DisplayName("댓글 수정 실패")
-    void test4(){
+    void test4() {
         //given
         ReplyRequestDto requestDto = new ReplyRequestDto();
         requestDto.setContent("test_content");
@@ -170,11 +170,10 @@ class ReplyServiceTest {
     }
 
 
-
     @Test
     @Transactional
     @DisplayName("댓글 수정 실패")
-    void test5(){
+    void test5() {
         //given
         ReplyRequestDto requestDto = new ReplyRequestDto();
         requestDto.setContent("test_content");
@@ -210,7 +209,7 @@ class ReplyServiceTest {
     @Test
     @Transactional
     @DisplayName("댓글 삭제")
-    void test6(){
+    void test6() {
         //given
         String accessToken = "dummy_access_token";
         String username = "test_user";
