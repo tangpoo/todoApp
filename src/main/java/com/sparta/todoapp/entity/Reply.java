@@ -2,6 +2,8 @@ package com.sparta.todoapp.entity;
 
 import com.sparta.todoapp.dto.reply.ReplyRequestDto;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -13,6 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "REPLY")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Reply extends TimeStamped {
 
     @Id
@@ -30,12 +34,6 @@ public class Reply extends TimeStamped {
     @JoinColumn(name = "schedule_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Schedule schedule;
-
-    public Reply(ReplyRequestDto requestDto, Schedule schedule, User user) {
-        this.content = requestDto.getContent();
-        this.user = user;
-        this.schedule = schedule;
-    }
 
     public void update(ReplyRequestDto requestDto) {
         this.content = requestDto.getContent();

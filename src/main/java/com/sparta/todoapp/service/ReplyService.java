@@ -36,7 +36,11 @@ public class ReplyService {
                 .orElseThrow(() -> new NoSuchElementException("일정을 찾지 못했습니다.")
                 );
 
-        Reply reply = new Reply(requestDto, schedule, user);
+        Reply reply = Reply.builder()
+                .content(requestDto.getContent())
+                .user(user)
+                .schedule(schedule)
+                .build();
 
         return new ReplyResponseDto(replyRepository.save(reply));
     }
