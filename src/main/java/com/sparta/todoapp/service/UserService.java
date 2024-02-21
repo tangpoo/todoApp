@@ -49,7 +49,13 @@ public class UserService {
             role = UserRoleEnum.ADMIN;
         }
 
-        User user = new User(username, password, email, role);
+        User user = User.builder()
+                        .username(username)
+                                .password(password)
+                                        .email(email)
+                                                .role(role)
+                                                        .build();
+
         userRepository.save(user);
 
         return new SignupResponseDto(user);
