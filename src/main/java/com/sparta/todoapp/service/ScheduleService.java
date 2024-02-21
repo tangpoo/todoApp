@@ -11,14 +11,13 @@ import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
