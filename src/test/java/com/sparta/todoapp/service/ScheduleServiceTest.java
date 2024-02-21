@@ -77,7 +77,7 @@ public class ScheduleServiceTest {
                 .build();
 
         //when
-        given(scheduleRepository.save(any())).willReturn(schedule);
+        given(scheduleRepository.save(any(Schedule.class))).willReturn(schedule);
         ScheduleResponseDto responseDto = scheduleService.createSchedule(accessToken, requestDto);
 
         //then
@@ -152,7 +152,7 @@ public class ScheduleServiceTest {
 
     @Test
     @Transactional
-    @DisplayName("조회할 스케줄이 없는 경우")
+    @DisplayName("스케줄 조회 실패")
     void test4() {
         //given
         String accessToken = "dummy_access_token";
@@ -162,7 +162,7 @@ public class ScheduleServiceTest {
         given(userRepository.findByUsername(username)).willReturn(Optional.of(new User()));
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.empty());
 
-        //when, then
+        //when + then
         assertThrows(NoSuchElementException.class, () -> scheduleService.getScheduleById("dummy_access_token", 1L));
     }
 
