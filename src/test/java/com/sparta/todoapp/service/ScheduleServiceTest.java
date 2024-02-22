@@ -49,7 +49,6 @@ public class ScheduleServiceTest {
     JwtUtil jwtUtil;
 
     @Test
-    @Transactional
     @DisplayName("스케줄 생성, 조회")
     void test1() {
         //given
