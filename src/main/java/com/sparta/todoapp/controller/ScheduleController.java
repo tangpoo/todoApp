@@ -26,7 +26,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @PostMapping("/new")
-//    @Operation(summary = CREATE_SCHEDULE_API)
+    @Operation(summary = CREATE_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> createSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
             @RequestBody ScheduleRequestDto requestDto) {
@@ -34,12 +34,8 @@ public class ScheduleController {
 
         ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(accessToken, requestDto);
 
-//        return ResponseEntity.created(createUri(scheduleResponseDto.getTodoId()))
-//                .body(ResponseDto.<ScheduleResponseDto>builder()
-//                        .message(CREATE_SCHEDULE_SUCCESS)
-//                        .data(scheduleResponseDto)
-//                        .build());
-        return ResponseEntity.ok().body(ResponseDto.<ScheduleResponseDto>builder()
+        return ResponseEntity.created(createUri(scheduleResponseDto.getTodoId()))
+                .body(ResponseDto.<ScheduleResponseDto>builder()
                         .message(CREATE_SCHEDULE_SUCCESS)
                         .data(scheduleResponseDto)
                         .build());
