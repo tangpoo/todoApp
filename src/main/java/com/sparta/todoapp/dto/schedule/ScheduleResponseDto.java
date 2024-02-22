@@ -1,6 +1,7 @@
 package com.sparta.todoapp.dto.schedule;
 
 import com.sparta.todoapp.entity.Schedule;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,12 +13,14 @@ import java.util.Map;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class ScheduleResponseDto {
     private Long todoId;
     private String title;
     private String content;
     private String author;
     private LocalDateTime date;
+    @Builder.Default
     private Map<Long, String> replyList = new LinkedHashMap<>();
     private boolean isCompleted;
     private boolean isPrivate;
