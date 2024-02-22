@@ -1,5 +1,6 @@
 package com.sparta.todoapp.service;
 
+import com.sparta.todoapp.common.CommonTest;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
@@ -28,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+public class UserServiceTest implements CommonTest {
 
     @InjectMocks
     UserService userService;
@@ -48,9 +49,9 @@ public class UserServiceTest {
     void test1(){
         //given
         SignupRequestDto requestDto = new SignupRequestDto();
-        requestDto.setUsername("test_username");
-        requestDto.setPassword("testPassword");
-        requestDto.setEmail("test@testEmail.com");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
+        requestDto.setEmail(TEST_USER_EMAIL);
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -67,9 +68,9 @@ public class UserServiceTest {
     void test2(){
         //given
         SignupRequestDto requestDto = new SignupRequestDto();
-        requestDto.setUsername("test_username");
-        requestDto.setPassword("testPassword");
-        requestDto.setEmail("test@testEmail.com");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
+        requestDto.setEmail(TEST_USER_EMAIL);
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -87,11 +88,11 @@ public class UserServiceTest {
     void test3(){
         //given
         SignupRequestDto requestDto = new SignupRequestDto();
-        requestDto.setUsername("test_username");
-        requestDto.setPassword("testPassword");
-        requestDto.setEmail("test@testEmail.com");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
+        requestDto.setEmail(TEST_USER_EMAIL);
         requestDto.setAdmin(true);
-        requestDto.setAdminToken("test_fail_admin_token");
+        requestDto.setAdminToken(TEST_TOKEN);
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -109,11 +110,11 @@ public class UserServiceTest {
     void test4(){
         //given
         SignupRequestDto requestDto = new SignupRequestDto();
-        requestDto.setUsername("test_username");
-        requestDto.setPassword("testPassword");
-        requestDto.setEmail("test@testEmail.com");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
+        requestDto.setEmail(TEST_USER_EMAIL);
         requestDto.setAdmin(true);
-        requestDto.setAdminToken("AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC");
+        requestDto.setAdminToken(TEST_TOKEN);
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -143,12 +144,12 @@ public class UserServiceTest {
     void test5() {
         //given
         LoginRequestDto requestDto = new LoginRequestDto();
-        requestDto.setUsername("test_name");
-        requestDto.setPassword("test_password");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
 
         User user = User.builder()
                 .username(requestDto.getUsername())
-                .email("test_email")
+                .email(TEST_USER_EMAIL)
                 .password(requestDto.getPassword())
                 .role(UserRoleEnum.USER)
                 .build();
@@ -165,13 +166,13 @@ public class UserServiceTest {
     void test6() {
         //given
         LoginRequestDto requestDto = new LoginRequestDto();
-        requestDto.setUsername("test_name");
-        requestDto.setPassword("test_password");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
 
         User user = User.builder()
                 .username(requestDto.getUsername())
-                .email("test_email")
-                .password("test_diff_password")
+                .email(TEST_USER_EMAIL)
+                .password(ANOTHER_PREFIX + TEST_USER_PASSWORD)
                 .role(UserRoleEnum.USER)
                 .build();
 
@@ -187,12 +188,12 @@ public class UserServiceTest {
     void test7() {
         //given
         LoginRequestDto requestDto = new LoginRequestDto();
-        requestDto.setUsername("test_name");
-        requestDto.setPassword("test_password");
+        requestDto.setUsername(TEST_USER_NAME);
+        requestDto.setPassword(TEST_USER_PASSWORD);
 
         User user = User.builder()
                 .username(requestDto.getUsername())
-                .email("test_email")
+                .email(TEST_USER_EMAIL)
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .role(UserRoleEnum.USER)
                 .build();

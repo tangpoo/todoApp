@@ -25,7 +25,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @PostMapping("/newA")
+    @PostMapping("/new")
 //    @Operation(summary = CREATE_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> createSchedule(
             @RequestHeader(value = "Authorization") String accessToken,

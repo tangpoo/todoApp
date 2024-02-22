@@ -1,6 +1,7 @@
 package com.sparta.todoapp.dto.schedule;
 
 import com.sparta.todoapp.entity.Schedule;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 
 @Getter
 @Setter
+@Builder
 public class ScheduleResponseDto {
     private Long todoId;
     private String title;

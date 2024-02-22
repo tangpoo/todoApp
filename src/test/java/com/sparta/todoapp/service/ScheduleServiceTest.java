@@ -1,5 +1,6 @@
 package com.sparta.todoapp.service;
 
+import com.sparta.todoapp.common.TodoTest;
 import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ScheduleServiceTest {
+public class ScheduleServiceTest implements TodoTest {
 
     @InjectMocks
     ScheduleService scheduleService;
@@ -54,13 +55,13 @@ public class ScheduleServiceTest {
         //given
         ScheduleRequestDto requestDto = new ScheduleRequestDto("Test Title", "Test Content");
 
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String accessToken = TEST_TOKEN;
+        String username = TEST_USER_NAME;
 
         User user = User.builder()
                 .username(username)
-                .password("test_password")
-                .email("test_email")
+                .password(TEST_USER_PASSWORD)
+                .email(TEST_USER_EMAIL)
                 .role(UserRoleEnum.USER)
                 .build();
 
@@ -70,8 +71,8 @@ public class ScheduleServiceTest {
         Long scheduleId = 1L;
         Schedule schedule = Schedule.builder()
                 .id(scheduleId)
-                .title("Test Title")
-                .content("Test Content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(user)
                 .build();
 
@@ -82,8 +83,8 @@ public class ScheduleServiceTest {
         //then
         assertNotNull(responseDto);
         assertEquals(scheduleId, responseDto.getTodoId());
-        assertEquals("Test Title", responseDto.getTitle());
-        assertEquals("Test Content", responseDto.getContent());
+        assertEquals(TEST_SCHEDULE_TITLE, responseDto.getTitle());
+        assertEquals(TEST_SCHEDULE_CONTENT, responseDto.getContent());
         assertFalse(responseDto.isCompleted());
         assertFalse(responseDto.isPrivate());
         assertEquals(username, responseDto.getAuthor());
@@ -96,23 +97,22 @@ public class ScheduleServiceTest {
     void test2() {
         //given
         Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(new User())
                 .build();
         List<Reply> replies = new ArrayList<>();
         replies.add(Reply.builder().content("reply_test").schedule(schedule).build());
 
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String username = TEST_USER_NAME;
 
-        given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
+        given(jwtUtil.getUserInfoFromToken(TEST_TOKEN)).willReturn(username);
         given(userRepository.findByUsername(username)).willReturn(Optional.of(new User()));
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.of(schedule));
         given(replyRepository.findAllByScheduleId(any())).willReturn(replies);
 
         //when
-        ScheduleResponseDto responseDto = scheduleService.getScheduleById("dummy_access_token", 1L);
+        ScheduleResponseDto responseDto = scheduleService.getScheduleById(TEST_TOKEN, TEST_USER_ID);
 
         //then
         assertEquals(schedule.getId(), responseDto.getTodoId());
@@ -126,23 +126,22 @@ public class ScheduleServiceTest {
         //given
         User user = new User();
         Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(user)
                 .build();
         List<Reply> replies = new ArrayList<>();
 
 
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String username = TEST_USER_NAME;
 
-        given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
+        given(jwtUtil.getUserInfoFromToken(TEST_TOKEN)).willReturn(username);
         given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.of(schedule));
         given(replyRepository.findAllByScheduleId(any())).willReturn(replies);
 
         //when
-        ScheduleResponseDto responseDto = scheduleService.getScheduleById("dummy_access_token", 1L);
+        ScheduleResponseDto responseDto = scheduleService.getScheduleById(TEST_TOKEN, TEST_SCHEDULE_ID);
 
         //then
         assertEquals(responseDto.getTodoId(), schedule.getId());
@@ -154,15 +153,14 @@ public class ScheduleServiceTest {
     @DisplayName("스케줄 조회 실패")
     void test4() {
         //given
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String username = TEST_USER_NAME;
 
-        given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
+        given(jwtUtil.getUserInfoFromToken(TEST_TOKEN)).willReturn(username);
         given(userRepository.findByUsername(username)).willReturn(Optional.of(new User()));
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.empty());
 
         //when + then
-        assertThrows(NoSuchElementException.class, () -> scheduleService.getScheduleById("dummy_access_token", 1L));
+        assertThrows(NoSuchElementException.class, () -> scheduleService.getScheduleById(TEST_TOKEN, TEST_USER_ID));
     }
 
     @Test
@@ -170,19 +168,19 @@ public class ScheduleServiceTest {
     @DisplayName("스케줄 목록 조회")
     void test5() {
         //given
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String accessToken = TEST_TOKEN;
+        String username = TEST_USER_NAME;
         User user = User.builder()
                 .username(username)
-                .email("test_email")
-                .password("test_password")
+                .email(TEST_USER_EMAIL)
+                .password(TEST_USER_PASSWORD)
                 .role(UserRoleEnum.USER)
                 .build();
         List<Schedule> schedules = new ArrayList<>();
 
         Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(user)
                 .build();
 
@@ -206,17 +204,17 @@ public class ScheduleServiceTest {
     void updateSchedule() {
         //given
         ScheduleRequestDto requestDto = new ScheduleRequestDto("test_title_update", "test_content_update");
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String accessToken = TEST_TOKEN;
+        String username = TEST_USER_NAME;
         User user = User.builder()
                 .username(username)
-                .email("test_email")
-                .password("test_password")
+                .email(TEST_USER_EMAIL)
+                .password(TEST_USER_PASSWORD)
                 .role(UserRoleEnum.USER)
                 .build();
         Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(user)
                 .build();
 
@@ -225,7 +223,7 @@ public class ScheduleServiceTest {
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.of(schedule));
 
         //when
-        scheduleService.updateSchedule(accessToken, requestDto, 1L, true, true);
+        scheduleService.updateSchedule(accessToken, requestDto, TEST_SCHEDULE_ID, true, true);
 
         //then
         assertEquals(schedule.getTitle(), requestDto.getTitle());
@@ -237,17 +235,17 @@ public class ScheduleServiceTest {
     @DisplayName("스케줄 삭제")
     void deleteSchedule() {
         //given
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String accessToken = TEST_TOKEN;
+        String username = TEST_USER_NAME;
         User user = User.builder()
                 .username(username)
-                .email("test_email")
-                .password("test_password")
+                .email(TEST_USER_EMAIL)
+                .password(TEST_USER_PASSWORD)
                 .role(UserRoleEnum.USER)
                 .build();
         Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(user)
                 .build();
 
@@ -256,7 +254,7 @@ public class ScheduleServiceTest {
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.of(schedule));
 
         //when
-        scheduleService.deleteSchedule(accessToken, 1L);
+        scheduleService.deleteSchedule(accessToken, TEST_SCHEDULE_ID);
 
         //then
         verify(scheduleRepository, times(1)).delete(schedule);
@@ -267,17 +265,17 @@ public class ScheduleServiceTest {
     @DisplayName("스케줄 상태 변경")
     void completedSchedule() {
         //given
-        String accessToken = "dummy_access_token";
-        String username = "test_user";
+        String accessToken = TEST_TOKEN;
+        String username = TEST_USER_NAME;
         User user = User.builder()
                 .username(username)
-                .email("test_email")
-                .password("test_password")
+                .email(TEST_USER_EMAIL)
+                .password(TEST_USER_PASSWORD)
                 .role(UserRoleEnum.USER)
                 .build();
         Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
+                .title(TEST_SCHEDULE_TITLE)
+                .content(TEST_SCHEDULE_CONTENT)
                 .user(user)
                 .build();
 
@@ -286,7 +284,7 @@ public class ScheduleServiceTest {
         given(scheduleRepository.findByIdAndUserId(any(), any())).willReturn(Optional.of(schedule));
 
         //when
-        scheduleService.completedSchedule(accessToken, 1L, true, true);
+        scheduleService.completedSchedule(accessToken, TEST_SCHEDULE_ID, true, true);
 
         //then
         assertTrue(schedule.isCompleted());
