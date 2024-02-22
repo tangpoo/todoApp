@@ -1,6 +1,6 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.common.TodoTest;
+import com.sparta.todoapp.common.ScheduleTest;
 import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ScheduleServiceTest implements TodoTest {
+public class ScheduleServiceTest implements ScheduleTest {
 
     @InjectMocks
     ScheduleService scheduleService;
