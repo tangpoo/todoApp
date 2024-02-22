@@ -1,7 +1,7 @@
 package com.sparta.todoapp.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.todoapp.common.CommonTest;
+import com.sparta.todoapp.common.UserTest;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
 import com.sparta.todoapp.entity.User;
@@ -9,7 +9,6 @@ import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -25,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @WebMvcTest(UserController.class)
-public class UserControllerTest implements CommonTest {
+public class UserControllerTest implements UserTest {
 
     @MockBean
     UserService userService;

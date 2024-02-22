@@ -2,7 +2,7 @@ package com.sparta.todoapp.common;
 
 import com.sparta.todoapp.entity.User;
 
-public interface CommonTest {
+public interface UserTest {
     String ANOTHER_PREFIX = "another";
     Long TEST_USER_ID = 1L;
     Long TEST_ANOTHER_USER_ID = 2L;

@@ -1,6 +1,6 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.common.CommonTest;
+import com.sparta.todoapp.common.UserTest;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
@@ -8,7 +8,6 @@ import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest implements CommonTest {
+public class UserServiceTest implements UserTest {
 
     @InjectMocks
     UserService userService;
