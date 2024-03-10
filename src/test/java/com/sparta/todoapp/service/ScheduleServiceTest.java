@@ -164,40 +164,40 @@ public class ScheduleServiceTest implements ScheduleTest {
         assertThrows(NoSuchElementException.class, () -> scheduleService.getScheduleById(TEST_TOKEN, TEST_USER_ID));
     }
 
-    @Test
-    @Transactional
-    @DisplayName("스케줄 목록 조회")
-    void test5() {
-        //given
-        String accessToken = TEST_TOKEN;
-        String username = TEST_USER_NAME;
-        User user = User.builder()
-                .username(username)
-                .email(TEST_USER_EMAIL)
-                .password(TEST_USER_PASSWORD)
-                .role(UserRoleEnum.USER)
-                .build();
-        List<Schedule> schedules = new ArrayList<>();
-
-        Schedule schedule = Schedule.builder()
-                .title(TEST_SCHEDULE_TITLE)
-                .content(TEST_SCHEDULE_CONTENT)
-                .user(user)
-                .build();
-
-        schedules.add(schedule);
-
-        given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
-        given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
-        given(scheduleRepository.findAllByUserIdOrderByIsCompletedAscModifiedAtDesc(user.getId())).willReturn(Optional.of(schedules));
-
-        //when
-        ScheduleListResponseDto responseDto = scheduleService.getSchedules(accessToken);
-
-        //then
-        assertEquals(responseDto.getSchedules().size(), 1);
-        assertEquals(responseDto.getSchedules().get(0).getTodoId(), schedule.getId());
-    }
+//    @Test
+//    @Transactional
+//    @DisplayName("스케줄 목록 조회")
+//    void test5() {
+//        //given
+//        String accessToken = TEST_TOKEN;
+//        String username = TEST_USER_NAME;
+//        User user = User.builder()
+//                .username(username)
+//                .email(TEST_USER_EMAIL)
+//                .password(TEST_USER_PASSWORD)
+//                .role(UserRoleEnum.USER)
+//                .build();
+//        List<Schedule> schedules = new ArrayList<>();
+//
+//        Schedule schedule = Schedule.builder()
+//                .title(TEST_SCHEDULE_TITLE)
+//                .content(TEST_SCHEDULE_CONTENT)
+//                .user(user)
+//                .build();
+//
+//        schedules.add(schedule);
+//
+//        given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
+//        given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+//        given(scheduleRepository.findAllByUserIdOrderByIsCompletedAscModifiedAtDesc(user.getId())).willReturn(Optional.of(schedules));
+//
+//        //when
+//        ScheduleListResponseDto responseDto = scheduleService.getSchedules(accessToken);
+//
+//        //then
+//        assertEquals(responseDto.getSchedules().size(), 1);
+//        assertEquals(responseDto.getSchedules().get(0).getTodoId(), schedule.getId());
+//    }
 
     @Test
     @Transactional

@@ -1,8 +1,11 @@
 package com.sparta.todoapp.service;
 
+import com.querydsl.core.QueryFactory;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
+import com.sparta.todoapp.entity.QSchedule;
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.entity.User;
@@ -10,15 +13,16 @@ import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -29,6 +33,7 @@ public class ScheduleService {
     private final UserRepository userRepository;
     private final ReplyRepository replyRepository;
     private final JwtUtil jwtUtil;
+    private final JPAQueryFactory queryFactory;
 
     @Transactional
     public ScheduleResponseDto createSchedule(String accessToken, ScheduleRequestDto requestDto) {
@@ -65,9 +70,18 @@ public class ScheduleService {
 
     public ScheduleListResponseDto getSchedules(String accessToken) {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
-        User user = userRepository.findByUsername(author).orElseThrow();
+        User user = userRepository.findByUsername(author).orElseThrow();;
 
-        List<Schedule> schedules = scheduleRepository.findAllByUserIdOrderByIsCompletedAscModifiedAtDesc(user.getId()).orElseThrow();
+        QSchedule qSchedule = new QSchedule("u");
+
+        List<Schedule> schedules =
+            queryFactory.selectFrom(qSchedule)
+            .where(qSchedule.user.eq(user))
+                .orderBy(qSchedule.isCompleted.asc(), qSchedule.createdAt.asc())
+                .fetch();
+
+        // 유저 객체를 가지고 schedule 을 isComplete 가 false 인 것, 작성일이 빠른 순으로 정렬
+//        List<Schedule> schedules = scheduleRepository.findAllByUserIdOrderByIsCompletedAscModifiedAtDesc(user.getId()).orElseThrow();
 
         return new ScheduleListResponseDto(user.getUsername(), schedules.stream().map(ScheduleResponseDto::new).toList());
     }
