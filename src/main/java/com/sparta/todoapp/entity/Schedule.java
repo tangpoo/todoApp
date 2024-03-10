@@ -8,13 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-@Table(name = "schedule")
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "schedules")
 public class Schedule extends TimeStamped {
 
     @Id

@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
-@Table(name = "REPLY")
+@Table(name = "replys")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @Builder
