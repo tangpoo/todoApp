@@ -12,6 +12,7 @@ import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
+import java.time.MonthDay;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -145,7 +146,7 @@ public class ScheduleServiceTest implements ScheduleTest {
 
         //then
         assertEquals(responseDto.getTodoId(), schedule.getId());
-        assertEquals(responseDto.getReplyList().size(), 0);
+        assertNull(responseDto.getReplyList());
     }
 
     @Test

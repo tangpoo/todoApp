@@ -91,7 +91,7 @@ public class UserServiceTest implements UserTest {
         requestDto.setPassword(TEST_USER_PASSWORD);
         requestDto.setEmail(TEST_USER_EMAIL);
         requestDto.setAdmin(true);
-        requestDto.setAdminToken(TEST_TOKEN);
+        requestDto.setAdminToken(TEST_FAIL_TOKEN);
 
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
@@ -121,7 +121,7 @@ public class UserServiceTest implements UserTest {
         User user = User.builder()
                 .username(username)
                 .email("test_email")
-                .password("test_password")
+                .password(password)
                 .role(UserRoleEnum.USER)
                 .build();
 

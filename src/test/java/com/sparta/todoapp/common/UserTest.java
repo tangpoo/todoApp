@@ -9,7 +9,8 @@ public interface UserTest {
     String TEST_USER_NAME = "username";
     String TEST_USER_PASSWORD = "password";
     String TEST_USER_EMAIL = "email@email.com";
-    String TEST_TOKEN = "failToken";
+    String TEST_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
+    String TEST_FAIL_TOKEN = "failToken";
     User TEST_USER = User.builder()
             .username(TEST_USER_NAME)
             .password(TEST_USER_PASSWORD)
