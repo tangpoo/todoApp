@@ -34,8 +34,8 @@ public class WebConfig {
                         .permitAll() // resources 접근 허용 설정
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/user/**").permitAll()
-                        .requestMatchers("/api/schedule/**").permitAll()
+                        .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/schedules/**").permitAll()
                         .anyRequest().authenticated()
         );
 

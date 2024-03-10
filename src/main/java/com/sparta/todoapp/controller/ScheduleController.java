@@ -20,7 +20,7 @@ import static com.sparta.todoapp.message.ScheduleMessage.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/schedule")
+@RequestMapping("/api/schedules")
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
@@ -55,7 +55,7 @@ public class ScheduleController {
                         .build());
     }
 
-    @GetMapping("/schedules")
+    @GetMapping
     @Operation(summary = SEARCH_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleListResponseDto>> getSchedules(
             @RequestHeader(value = "Authorization") String accessToken) {
@@ -103,7 +103,7 @@ public class ScheduleController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     @Operation(summary = DELETE_SCHEDULE_API)
     public ResponseEntity<Void> deleteSchedule(
             @RequestHeader(value = "Authorization") String accessToken,
