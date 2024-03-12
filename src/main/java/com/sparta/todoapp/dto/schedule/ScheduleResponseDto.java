@@ -4,6 +4,7 @@ import com.sparta.todoapp.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.Map;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ScheduleResponseDto {
     private Long todoId;
     private String title;

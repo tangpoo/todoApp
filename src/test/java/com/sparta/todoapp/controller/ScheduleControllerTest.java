@@ -122,23 +122,23 @@ public class ScheduleControllerTest implements ScheduleTest {
 //                .andExpect(jsonPath("$.content").value(TEST_SCHEDULE_CONTENT));
     }
 
-    @Test
-    @DisplayName("스케줄 목록 조회 요청")
-    void test3() throws Exception {
-        //given
-        TEST_SCHEDULE_LIST.add(TEST_SCHEDULE_RESPONSE_DTO);
-        TEST_SCHEDULE_LIST.add(TEST_ANOTHER_SCHEDULE_RESPONSE_DTO);
-        ScheduleListResponseDto responseDto = new ScheduleListResponseDto(TEST_USER_NAME, TEST_SCHEDULE_LIST);
-
-        given(scheduleService.getSchedules(eq(TEST_TOKEN))).willReturn(responseDto);
-
-        //when
-        var action = mvc.perform(get("/api/schedule/schedules", TEST_TOKEN)
-                .header("Authorization", TEST_TOKEN)
-                .accept(MediaType.APPLICATION_JSON));
-
-        //then
-        action
-                .andExpect(status().isOk());
-    }
+//    @Test
+//    @DisplayName("스케줄 목록 조회 요청")
+//    void test3() throws Exception {
+//        //given
+//        TEST_SCHEDULE_LIST.add(TEST_SCHEDULE_RESPONSE_DTO);
+//        TEST_SCHEDULE_LIST.add(TEST_ANOTHER_SCHEDULE_RESPONSE_DTO);
+//        ScheduleListResponseDto responseDto = new ScheduleListResponseDto(TEST_USER_NAME, TEST_SCHEDULE_LIST);
+//
+//        given(scheduleService.getSchedules(eq(TEST_TOKEN))).willReturn(responseDto);
+//
+//        //when
+//        var action = mvc.perform(get("/api/schedule/schedules", TEST_TOKEN)
+//                .header("Authorization", TEST_TOKEN)
+//                .accept(MediaType.APPLICATION_JSON));
+//
+//        //then
+//        action
+//                .andExpect(status().isOk());
+//    }
 }

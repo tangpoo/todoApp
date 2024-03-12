@@ -1,6 +1,7 @@
 package com.sparta.todoapp.controller;
 
 import com.sparta.todoapp.dto.ResponseDto;
+import com.sparta.todoapp.dto.ResponsePageDto;
 import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
@@ -9,6 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -57,14 +60,15 @@ public class ScheduleController {
 
     @GetMapping
     @Operation(summary = SEARCH_SCHEDULE_API)
-    public ResponseEntity<ResponseDto<ScheduleListResponseDto>> getSchedules(
-            @RequestHeader(value = "Authorization") String accessToken) {
+    public ResponseEntity<ResponsePageDto<ScheduleResponseDto>> getSchedules(
+            @RequestHeader(value = "Authorization") String accessToken,
+            Pageable pageable) {
         log.info(SEARCH_SCHEDULE_API);
 
         return ResponseEntity.ok()
-                .body(ResponseDto.<ScheduleListResponseDto>builder()
+                .body(ResponsePageDto.<ScheduleResponseDto>builder()
                         .message(SEARCH_SCHEDULE_SUCCESS)
-                        .data(scheduleService.getSchedules(accessToken))
+                        .data(scheduleService.getSchedules(accessToken, pageable))
                         .build());
     }
 
