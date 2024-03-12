@@ -1,6 +1,7 @@
 package com.sparta.todoapp.message;
 
 public class UserMessage {
+
     private UserMessage() {
     }
 

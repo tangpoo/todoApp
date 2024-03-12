@@ -9,12 +9,11 @@ import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
 import com.sparta.todoapp.repository.UserRepository;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -30,30 +29,31 @@ public class ReplyService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
 
         User user = userRepository.findByUsername(author)
-                .orElseThrow(() -> new NoSuchElementException("회원을 찾지 못했습니다.")
-                );
+            .orElseThrow(() -> new NoSuchElementException("회원을 찾지 못했습니다.")
+            );
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("일정을 찾지 못했습니다.")
-                );
+            .orElseThrow(() -> new NoSuchElementException("일정을 찾지 못했습니다.")
+            );
 
         Reply reply = Reply.builder()
-                .content(requestDto.getContent())
-                .user(user)
-                .schedule(schedule)
-                .build();
+            .content(requestDto.getContent())
+            .user(user)
+            .schedule(schedule)
+            .build();
 
         return new ReplyResponseDto(replyRepository.save(reply));
     }
 
     @Transactional
-    public ReplyResponseDto updateReply(String accessToken, ReplyRequestDto requestDto, Long scheduleId, Long replyId) {
+    public ReplyResponseDto updateReply(String accessToken, ReplyRequestDto requestDto,
+        Long scheduleId, Long replyId) {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
 
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
+            .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
 
         scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
+            .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
 
         if (!author.equals(reply.getUser().getUsername())) {
             throw new AccessDeniedException("작성자만 수정할 수 있습니다.");
@@ -67,10 +67,10 @@ public class ReplyService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
 
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
+            .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
 
         scheduleRepository.findById(scheduleId)
-                .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
+            .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
 
         if (!author.equals(reply.getUser().getUsername())) {
             throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");

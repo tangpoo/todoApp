@@ -1,9 +1,17 @@
 package com.sparta.todoapp.jwt;
 
 import com.sparta.todoapp.entity.UserRoleEnum;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,13 +19,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
+
     // Header KEY 값
     private static final String AUTHORIZATION_HEADER = "Authorization";
     // 사용자 권한 값의 KEY
@@ -46,20 +51,21 @@ public class JwtUtil {
         Date date = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder()
-                        .setSubject(username) // 사용자 식별자값(ID)
-                        .claim(AUTHORIZATION_KEY, role) // 사용자 권한
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
-                        .setIssuedAt(date) // 발급일
-                        .signWith(key, signatureAlgorithm) // 암호화 알고리즘
-                        .compact();
+            Jwts.builder()
+                .setSubject(username) // 사용자 식별자값(ID)
+                .claim(AUTHORIZATION_KEY, role) // 사용자 권한
+                .setExpiration(new Date(date.getTime() + TOKEN_TIME)) // 만료 시간
+                .setIssuedAt(date) // 발급일
+                .signWith(key, signatureAlgorithm) // 암호화 알고리즘
+                .compact();
     }
 
     // 토큰에서 사용자 정보 가져오기
     public String getUserInfoFromToken(String bearerToken) {
         String token = getJwtFromHeader(bearerToken);
         if (validateToken(token)) {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody()
+                .getSubject();
         }
 
         throw new IllegalArgumentException("오류");

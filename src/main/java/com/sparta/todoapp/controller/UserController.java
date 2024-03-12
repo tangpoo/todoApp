@@ -1,5 +1,10 @@
 package com.sparta.todoapp.controller;
 
+import static com.sparta.todoapp.message.UserMessage.LOGIN_API;
+import static com.sparta.todoapp.message.UserMessage.LOGIN_SUCCESS;
+import static com.sparta.todoapp.message.UserMessage.SIGN_UP_API;
+import static com.sparta.todoapp.message.UserMessage.SIGN_UP_SUCCESS;
+
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
@@ -16,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.sparta.todoapp.message.UserMessage.*;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -28,13 +31,14 @@ public class UserController {
 
     @PostMapping("/signup")
     @Operation(summary = SIGN_UP_API)
-    public ResponseEntity<ResponseDto<SignupResponseDto>> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+    public ResponseEntity<ResponseDto<SignupResponseDto>> signup(
+        @RequestBody @Valid SignupRequestDto requestDto) {
         log.info(SIGN_UP_API);
         return ResponseEntity.ok()
-                .body(ResponseDto.<SignupResponseDto>builder()
-                        .message(SIGN_UP_SUCCESS)
-                        .data(userService.signup(requestDto))
-                        .build());
+            .body(ResponseDto.<SignupResponseDto>builder()
+                .message(SIGN_UP_SUCCESS)
+                .data(userService.signup(requestDto))
+                .build());
     }
 
     @PostMapping("/login")
@@ -42,9 +46,9 @@ public class UserController {
     public ResponseEntity<ResponseDto<Void>> login(@RequestBody LoginRequestDto requestDto) {
         log.info(LOGIN_API);
         return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, userService.login(requestDto))
-                .body(ResponseDto.<Void>builder()
-                        .message(LOGIN_SUCCESS)
-                        .build());
+            .header(HttpHeaders.AUTHORIZATION, userService.login(requestDto))
+            .body(ResponseDto.<Void>builder()
+                .message(LOGIN_SUCCESS)
+                .build());
     }
 }

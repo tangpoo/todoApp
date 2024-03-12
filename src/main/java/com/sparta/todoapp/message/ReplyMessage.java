@@ -1,6 +1,7 @@
 package com.sparta.todoapp.message;
 
 public class ReplyMessage {
+
     public ReplyMessage() {
     }
 

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 @Setter
 @Builder
 public class ResponsePageDto<T> {
+
     private String message;
     private Page<T> data;
 }

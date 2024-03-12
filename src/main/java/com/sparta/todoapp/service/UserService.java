@@ -7,14 +7,13 @@ import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.UserRepository;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +49,11 @@ public class UserService {
         }
 
         User user = User.builder()
-                .username(username)
-                .password(password)
-                .email(email)
-                .role(role)
-                .build();
+            .username(username)
+            .password(password)
+            .email(email)
+            .role(role)
+            .build();
 
         userRepository.save(user);
 
@@ -66,7 +65,7 @@ public class UserService {
         String password = requestDto.getPassword();
 
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new NoSuchElementException("등록된 회원이 없습니다.")
+            () -> new NoSuchElementException("등록된 회원이 없습니다.")
         );
 
         if (!passwordEncoder.matches(password, user.getPassword())) {

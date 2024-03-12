@@ -1,15 +1,9 @@
 package com.sparta.todoapp.service;
 
-import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.core.types.Projections.fields;
 
-import com.querydsl.core.QueryModifiers;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.entity.QSchedule;
@@ -28,9 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.expression.spel.ast.Projection;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,10 +42,10 @@ public class ScheduleService {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
         User user = userRepository.findByUsername(author).orElseThrow();
         Schedule schedule = Schedule.builder()
-                .title(requestDto.getTitle())
-                .content(requestDto.getContent())
-                .user(user)
-                .build();
+            .title(requestDto.getTitle())
+            .content(requestDto.getContent())
+            .user(user)
+            .build();
 
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
     }
@@ -80,7 +72,7 @@ public class ScheduleService {
 
     public Page<ScheduleResponseDto> getSchedules(String accessToken, Pageable pageable) {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
-        User user = userRepository.findByUsername(author).orElseThrow();;
+        User user = userRepository.findByUsername(author).orElseThrow();
 
         QSchedule qSchedule = new QSchedule("s");
 
@@ -118,7 +110,8 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleResponseDto updateSchedule(String accessToken, ScheduleRequestDto requestDto, Long id, boolean isCompleted, boolean isPrivate) {
+    public ScheduleResponseDto updateSchedule(String accessToken, ScheduleRequestDto requestDto,
+        Long id, boolean isCompleted, boolean isPrivate) {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
 
         if (isCompleted) {
@@ -141,7 +134,8 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void completedSchedule(String accessToken, Long id, boolean isCompleted, boolean isPrivate) {
+    public void completedSchedule(String accessToken, Long id, boolean isCompleted,
+        boolean isPrivate) {
         Schedule schedule = getScheduleByTokenAndId(accessToken, id);
 
         if (isCompleted) {
@@ -151,7 +145,7 @@ public class ScheduleService {
         if (isPrivate) {
             schedule.changeIsPrivate(isPrivate);
         }
-        
+
         // 현재 한번 완료한 스케줄을 다시 취소할 수는 없는 상태
 
     }
@@ -161,7 +155,7 @@ public class ScheduleService {
         User user = userRepository.findByUsername(author).orElseThrow();
 
         return scheduleRepository.findByIdAndUserId(id, user.getId())
-                .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
+            .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
     }
 
 }
