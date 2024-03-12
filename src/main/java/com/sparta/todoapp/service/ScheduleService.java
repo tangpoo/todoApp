@@ -1,7 +1,9 @@
 package com.sparta.todoapp.service;
 
 import static com.querydsl.core.types.Projections.fields;
+import static com.sparta.todoapp.entity.QSchedule.*;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
@@ -25,10 +27,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
@@ -39,8 +43,8 @@ public class ScheduleService {
 
     @Transactional
     public ScheduleResponseDto createSchedule(String accessToken, ScheduleRequestDto requestDto) {
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
-        User user = userRepository.findByUsername(author).orElseThrow();
+        User user = getUserByAccessToken(accessToken);
+
         Schedule schedule = Schedule.builder()
             .title(requestDto.getTitle())
             .content(requestDto.getContent())
@@ -61,20 +65,10 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    private Map<Long, String> getReplyList(List<Reply> replies) {
-        Map<Long, String> replyList = new LinkedHashMap<>();
-        for (Reply reply : replies) {
-            replyList.put(reply.getId(), reply.getContent());
-        }
-
-        return replyList;
-    }
-
     public Page<ScheduleResponseDto> getSchedules(String accessToken, Pageable pageable) {
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
-        User user = userRepository.findByUsername(author).orElseThrow();
+        User user = getUserByAccessToken(accessToken);
 
-        QSchedule qSchedule = new QSchedule("s");
+        QSchedule qSchedule = new QSchedule("s");   // 기본으로 바꿔보자.
 
         List<ScheduleResponseDto> schedules =
             queryFactory.select(fields(ScheduleResponseDto.class,
@@ -105,6 +99,37 @@ public class ScheduleService {
 
 //        ScheduleListResponseDto responseDto = new ScheduleListResponseDto(user.getUsername(),
 //            schedules.stream().map(ScheduleResponseDto::new).toList());
+
+        return new PageImpl<>(schedules, pageable, total);
+    }
+
+    public Page<ScheduleResponseDto> getSearchSchedule(String accessToken, String type,
+        String keyword, Pageable pageable) {
+        User user = getUserByAccessToken(accessToken);
+
+        QSchedule qSchedule = schedule;
+
+        List<ScheduleResponseDto> schedules = queryFactory
+            .select(fields(ScheduleResponseDto.class,
+                qSchedule.id.as("todoId"),
+                qSchedule.title,
+                qSchedule.content,
+                Expressions.asString(user.getUsername()).as("author"),
+                qSchedule.isCompleted,
+                qSchedule.isPrivate,
+                qSchedule.createdAt.as("date")))
+            .from(qSchedule)
+            .where(qSchedule.user.id.eq(user.getId()), eqType(type, keyword))
+            .orderBy(qSchedule.createdAt.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        Long total = queryFactory
+            .select(qSchedule.count())
+            .from(qSchedule)
+            .where(qSchedule.user.id.eq(user.getId()), eqType(type, keyword))
+            .fetchOne();
 
         return new PageImpl<>(schedules, pageable, total);
     }
@@ -158,4 +183,31 @@ public class ScheduleService {
             .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
     }
 
+    private User getUserByAccessToken(String accessToken){
+        String author = jwtUtil.getUserInfoFromToken(accessToken);
+        return userRepository.findByUsername(author).orElseThrow(
+            () -> new NoSuchElementException("회원을 찾을 수 없습니다.")
+        );
+    }
+
+    private Map<Long, String> getReplyList(List<Reply> replies) {
+        Map<Long, String> replyList = new LinkedHashMap<>();
+        for (Reply reply : replies) {
+            replyList.put(reply.getId(), reply.getContent());
+        }
+
+        return replyList;
+    }
+
+    private BooleanExpression eqType(String type, String keyword){
+        if(type.equals("title")){
+            return schedule.title.contains(keyword);
+        }
+
+        if(type.equals("content")){
+            return schedule.content.contains(keyword);
+        }
+
+        return null;
+    }
 }

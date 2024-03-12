@@ -3,6 +3,8 @@ package com.sparta.todoapp.controller;
 import static com.sparta.todoapp.message.ScheduleMessage.CREATE_SCHEDULE_API;
 import static com.sparta.todoapp.message.ScheduleMessage.CREATE_SCHEDULE_SUCCESS;
 import static com.sparta.todoapp.message.ScheduleMessage.DELETE_SCHEDULE_API;
+import static com.sparta.todoapp.message.ScheduleMessage.GET_SCHEDULES_API;
+import static com.sparta.todoapp.message.ScheduleMessage.GET_SCHEDULES_SUCCESS;
 import static com.sparta.todoapp.message.ScheduleMessage.GET_SCHEDULE_API;
 import static com.sparta.todoapp.message.ScheduleMessage.GET_SCHEDULE_SUCCESS;
 import static com.sparta.todoapp.message.ScheduleMessage.PATCH_SCHEDULE_API;
@@ -14,6 +16,8 @@ import static com.sparta.todoapp.message.ScheduleMessage.SEARCH_SCHEDULE_SUCCESS
 
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.dto.ResponsePageDto;
+import com.sparta.todoapp.dto.SearchListDto;
+import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.service.ScheduleService;
@@ -76,16 +80,32 @@ public class ScheduleController {
     }
 
     @GetMapping
-    @Operation(summary = SEARCH_SCHEDULE_API)
+    @Operation(summary = GET_SCHEDULE_API)
     public ResponseEntity<ResponsePageDto<ScheduleResponseDto>> getSchedules(
         @RequestHeader(value = "Authorization") String accessToken,
         Pageable pageable) {
-        log.info(SEARCH_SCHEDULE_API);
+        log.info(GET_SCHEDULES_API);
 
         return ResponseEntity.ok()
             .body(ResponsePageDto.<ScheduleResponseDto>builder()
-                .message(SEARCH_SCHEDULE_SUCCESS)
+                .message(GET_SCHEDULES_SUCCESS)
                 .data(scheduleService.getSchedules(accessToken, pageable))
+                .build());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<SearchListDto<ScheduleResponseDto>> getSearchSchedule(
+        @RequestHeader(value = "Authorization") String accessToken,
+        @RequestParam("type") String type,
+        @RequestParam("keyword") String keyword,
+        Pageable pageable
+        ){
+        log.info(SEARCH_SCHEDULE_API);
+
+        return ResponseEntity.ok()
+            .body(SearchListDto.<ScheduleResponseDto>builder()
+                .dataList(scheduleService.getSearchSchedule(accessToken, type, keyword, pageable))
+                .message(SEARCH_SCHEDULE_SUCCESS)
                 .build());
     }
 
