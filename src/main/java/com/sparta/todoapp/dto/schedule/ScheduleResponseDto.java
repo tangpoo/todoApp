@@ -31,7 +31,7 @@ public class ScheduleResponseDto {
         this.todoId = schedule.getId();
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
-        this.author = schedule.getUser().getUsername();
+        this.author = schedule.getMember().getUsername();
         this.date = schedule.getCreatedAt();
         this.replyList = replyList;
         this.isCompleted = schedule.isCompleted();
@@ -42,7 +42,7 @@ public class ScheduleResponseDto {
         this.todoId = schedule.getId();
         this.title = schedule.getTitle();
         this.content = schedule.getContent();
-        this.author = schedule.getUser().getUsername();
+        this.author = schedule.getMember().getUsername();
         this.date = schedule.getCreatedAt();
         this.isCompleted = schedule.isCompleted();
         this.isPrivate = schedule.isPrivate();

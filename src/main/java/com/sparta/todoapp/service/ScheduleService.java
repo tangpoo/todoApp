@@ -1,21 +1,22 @@
 package com.sparta.todoapp.service;
 
 import static com.querydsl.core.types.Projections.fields;
-import static com.sparta.todoapp.entity.QSchedule.*;
+import static com.sparta.todoapp.entity.QSchedule.schedule;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
+import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.QSchedule;
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
-import com.sparta.todoapp.entity.User;
+import com.sparta.todoapp.exceptionHandler.NotFindFilterException;
 import com.sparta.todoapp.jwt.JwtUtil;
+import com.sparta.todoapp.repository.MemberRepository;
 import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
-import com.sparta.todoapp.repository.UserRepository;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -36,19 +36,19 @@ import org.springframework.util.StringUtils;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ReplyRepository replyRepository;
     private final JwtUtil jwtUtil;
     private final JPAQueryFactory queryFactory;
 
     @Transactional
     public ScheduleResponseDto createSchedule(String accessToken, ScheduleRequestDto requestDto) {
-        User user = getUserByAccessToken(accessToken);
+        Member member = getUserByAccessToken(accessToken);
 
         Schedule schedule = Schedule.builder()
             .title(requestDto.getTitle())
             .content(requestDto.getContent())
-            .user(user)
+            .member(member)
             .build();
 
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
@@ -66,21 +66,21 @@ public class ScheduleService {
     }
 
     public Page<ScheduleResponseDto> getSchedules(String accessToken, Pageable pageable) {
-        User user = getUserByAccessToken(accessToken);
+        Member member = getUserByAccessToken(accessToken);
 
-        QSchedule qSchedule = new QSchedule("s");   // 기본으로 바꿔보자.
+        QSchedule qSchedule = schedule;
 
         List<ScheduleResponseDto> schedules =
             queryFactory.select(fields(ScheduleResponseDto.class,
                     qSchedule.id.as("todoId"),
                     qSchedule.title,
                     qSchedule.content,
-                    Expressions.asString(user.getUsername()).as("author"),
+                    Expressions.asString(member.getUsername()).as("author"),
                     qSchedule.isCompleted,
                     qSchedule.isPrivate,
                     qSchedule.createdAt.as("date")))
                 .from(qSchedule)
-                .where(qSchedule.user.eq(user))
+                .where(qSchedule.member.eq(member))
                 .orderBy(qSchedule.isCompleted.asc(), qSchedule.createdAt.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -91,7 +91,7 @@ public class ScheduleService {
         Long total = queryFactory
             .select(qSchedule.count())
             .from(qSchedule)
-            .where(qSchedule.user.id.eq(user.getId()))
+            .where(qSchedule.member.id.eq(member.getId()))
             .fetchOne();
 
         // 유저 객체를 가지고 schedule 을 isComplete 가 false 인 것, 작성일이 빠른 순으로 정렬
@@ -105,31 +105,37 @@ public class ScheduleService {
 
     public Page<ScheduleResponseDto> getSearchSchedule(String accessToken, String type,
         String keyword, Pageable pageable) {
-        User user = getUserByAccessToken(accessToken);
+        Member member = getUserByAccessToken(accessToken);
 
         QSchedule qSchedule = schedule;
 
-        List<ScheduleResponseDto> schedules = queryFactory
-            .select(fields(ScheduleResponseDto.class,
-                qSchedule.id.as("todoId"),
-                qSchedule.title,
-                qSchedule.content,
-                Expressions.asString(user.getUsername()).as("author"),
-                qSchedule.isCompleted,
-                qSchedule.isPrivate,
-                qSchedule.createdAt.as("date")))
-            .from(qSchedule)
-            .where(qSchedule.user.id.eq(user.getId()), eqType(type, keyword))
-            .orderBy(qSchedule.createdAt.asc())
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
-            .fetch();
+        List<ScheduleResponseDto> schedules;
+        Long total;
+        try {
+            schedules = queryFactory
+                .select(fields(ScheduleResponseDto.class,
+                    qSchedule.id.as("todoId"),
+                    qSchedule.title,
+                    qSchedule.content,
+                    Expressions.asString(member.getUsername()).as("author"),
+                    qSchedule.isCompleted,
+                    qSchedule.isPrivate,
+                    qSchedule.createdAt.as("date")))
+                .from(qSchedule)
+                .where(qSchedule.member.id.eq(member.getId()), eqType(type, keyword))
+                .orderBy(qSchedule.createdAt.asc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
 
-        Long total = queryFactory
-            .select(qSchedule.count())
-            .from(qSchedule)
-            .where(qSchedule.user.id.eq(user.getId()), eqType(type, keyword))
-            .fetchOne();
+            total = queryFactory
+                .select(qSchedule.count())
+                .from(qSchedule)
+                .where(qSchedule.member.id.eq(member.getId()), eqType(type, keyword))
+                .fetchOne();
+        } catch (ClassCastException e) {
+            throw new NotFindFilterException();
+        }
 
         return new PageImpl<>(schedules, pageable, total);
     }
@@ -177,15 +183,15 @@ public class ScheduleService {
 
     private Schedule getScheduleByTokenAndId(String accessToken, Long id) {
         String author = jwtUtil.getUserInfoFromToken(accessToken);
-        User user = userRepository.findByUsername(author).orElseThrow();
+        Member member = memberRepository.findByUsername(author).orElseThrow();
 
-        return scheduleRepository.findByIdAndUserId(id, user.getId())
+        return scheduleRepository.findByIdAndMemberId(id, member.getId())
             .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
     }
 
-    private User getUserByAccessToken(String accessToken){
+    private Member getUserByAccessToken(String accessToken){
         String author = jwtUtil.getUserInfoFromToken(accessToken);
-        return userRepository.findByUsername(author).orElseThrow(
+        return memberRepository.findByUsername(author).orElseThrow(
             () -> new NoSuchElementException("회원을 찾을 수 없습니다.")
         );
     }
@@ -200,6 +206,14 @@ public class ScheduleService {
     }
 
     private BooleanExpression eqType(String type, String keyword){
+
+        // 하나가 null 일 경우 다른 하나로만 검색
+        // 둘다 null 일 경우 모든 게시글 조회
+
+        if(type.isEmpty() || keyword.isEmpty()){
+            return Expressions.asBoolean(false);
+        }
+
         if(type.equals("title")){
             return schedule.title.contains(keyword);
         }

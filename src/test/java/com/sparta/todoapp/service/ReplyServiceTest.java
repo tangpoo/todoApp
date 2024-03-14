@@ -1,15 +1,24 @@
 package com.sparta.todoapp.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 import com.sparta.todoapp.dto.reply.ReplyRequestDto;
 import com.sparta.todoapp.dto.reply.ReplyResponseDto;
+import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
-import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
+import com.sparta.todoapp.repository.MemberRepository;
 import com.sparta.todoapp.repository.ReplyRepository;
 import com.sparta.todoapp.repository.ScheduleRepository;
-import com.sparta.todoapp.repository.UserRepository;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,16 +27,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class ReplyServiceTest {
 
@@ -35,7 +34,7 @@ class ReplyServiceTest {
     ReplyService replyService;
 
     @Mock
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @Mock
     ScheduleRepository scheduleRepository;
@@ -55,7 +54,7 @@ class ReplyServiceTest {
         requestDto.setContent("test_content");
         String accessToken = "dummy_access_token";
         String username = "test_user";
-        User user = User.builder()
+        Member member = Member.builder()
                 .username(username)
                 .email("test_email")
                 .password("test_password")
@@ -64,16 +63,16 @@ class ReplyServiceTest {
         Schedule schedule = Schedule.builder()
                 .title("test_title")
                 .content("test_content")
-                .user(user)
+                .member(member)
                 .build();
         Reply reply = Reply.builder()
                 .content(requestDto.getContent())
-                .user(user)
+                .member(member)
                 .schedule(schedule)
                 .build();
 
         given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
-        given(userRepository.findByUsername(username)).willReturn(Optional.of(user));
+        given(memberRepository.findByUsername(username)).willReturn(Optional.of(member));
         given(scheduleRepository.findById(any())).willReturn(Optional.of(schedule));
         given(replyRepository.save(any(Reply.class))).willReturn(reply);
 
@@ -94,7 +93,7 @@ class ReplyServiceTest {
         String username = "test_user";
 
         given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
-        given(userRepository.findByUsername(username)).willReturn(Optional.empty());
+        given(memberRepository.findByUsername(username)).willReturn(Optional.empty());
 
         //when + then
         assertThrows(NoSuchElementException.class, () -> replyService.createReply(accessToken, requestDto, 1L));
@@ -110,7 +109,7 @@ class ReplyServiceTest {
         String accessToken = "dummy_access_token";
         String username = "test_user";
 
-        User user = User.builder()
+       Member member = Member.builder()
                 .username(username)
                 .email("test_email")
                 .password("test_password")
@@ -119,12 +118,12 @@ class ReplyServiceTest {
         Schedule schedule = Schedule.builder()
                 .title("test_title")
                 .content("test_content")
-                .user(user)
+                .member(member)
                 .build();
         Reply reply = Reply.builder()
                 .id(1L)
                 .content(requestDto.getContent())
-                .user(user)
+                .member(member)
                 .schedule(schedule)
                 .build();
 
@@ -150,17 +149,17 @@ class ReplyServiceTest {
         String accessToken = "dummy_access_token";
         String username = "test_user";
 
-        User user = User.builder()
+        Member member = Member.builder()
                 .username(username)
                 .email("test_email")
                 .password("test_password")
                 .role(UserRoleEnum.USER)
                 .build();
-        Schedule schedule = Schedule.builder()
-                .title("test_title")
-                .content("test_content")
-                .user(user)
-                .build();
+//        Schedule schedule = Schedule.builder()
+//                .title("test_title")
+//                .content("test_content")
+//                .member(member)
+//                .build();
 
         given(jwtUtil.getUserInfoFromToken(accessToken)).willReturn(username);
         given(replyRepository.findById(any())).willReturn(Optional.empty());
@@ -180,7 +179,7 @@ class ReplyServiceTest {
         String accessToken = "dummy_access_token";
         String username = "test_user";
 
-        User user = User.builder()
+        Member member = Member.builder()
                 .username(username)
                 .email("test_email")
                 .password("test_password")
@@ -189,12 +188,12 @@ class ReplyServiceTest {
         Schedule schedule = Schedule.builder()
                 .title("test_title")
                 .content("test_content")
-                .user(user)
+                .member(member)
                 .build();
         Reply reply = Reply.builder()
                 .id(1L)
                 .content(requestDto.getContent())
-                .user(user)
+                .member(member)
                 .schedule(schedule)
                 .build();
 
@@ -214,7 +213,7 @@ class ReplyServiceTest {
         String accessToken = "dummy_access_token";
         String username = "test_user";
 
-        User user = User.builder()
+       Member member = Member.builder()
                 .username(username)
                 .email("test_email")
                 .password("test_password")
@@ -223,12 +222,12 @@ class ReplyServiceTest {
         Schedule schedule = Schedule.builder()
                 .title("test_title")
                 .content("test_content")
-                .user(user)
+                .member(member)
                 .build();
         Reply reply = Reply.builder()
                 .id(1L)
                 .content("test_content")
-                .user(user)
+                .member(member)
                 .schedule(schedule)
                 .build();
 

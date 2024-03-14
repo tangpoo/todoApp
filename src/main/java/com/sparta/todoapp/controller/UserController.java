@@ -6,6 +6,8 @@ import static com.sparta.todoapp.message.UserMessage.SIGN_UP_API;
 import static com.sparta.todoapp.message.UserMessage.SIGN_UP_SUCCESS;
 
 import com.sparta.todoapp.dto.ResponseDto;
+import com.sparta.todoapp.dto.TokenDto;
+import com.sparta.todoapp.dto.TokenRequestDto;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
@@ -41,12 +43,12 @@ public class UserController {
                 .build());
     }
 
-    @PostMapping("/login")
-    @Operation(summary = LOGIN_API)
-    public ResponseEntity<ResponseDto<Void>> login(@RequestBody LoginRequestDto requestDto) {
-        log.info(LOGIN_API);
+    @PostMapping("/reissue")
+    public ResponseEntity<ResponseDto<Void>> reissue(@RequestBody TokenRequestDto tokenRequestDto){
+        TokenDto token = userService.reissue(tokenRequestDto);
         return ResponseEntity.ok()
-            .header(HttpHeaders.AUTHORIZATION, userService.login(requestDto))
+            .header(HttpHeaders.AUTHORIZATION, token.getAccessToken())
+            .header("X-Refresh-Token", token.getRefreshToken())
             .body(ResponseDto.<Void>builder()
                 .message(LOGIN_SUCCESS)
                 .build());

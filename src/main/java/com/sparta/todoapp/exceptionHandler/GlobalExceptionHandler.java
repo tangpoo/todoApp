@@ -18,8 +18,8 @@ public class GlobalExceptionHandler {
                 e.getMessage()));
     }
 
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ExceptionDto> NoSuchElementException(NoSuchElementException e) {
+    @ExceptionHandler({NoSuchElementException.class, NotFindFilterException.class})
+    public ResponseEntity<ExceptionDto> NoSuchElementException(RuntimeException e) {
         return ResponseEntity.badRequest()
             .body(new ExceptionDto(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND,
                 e.getMessage()));
@@ -32,5 +32,6 @@ public class GlobalExceptionHandler {
             .body(new ExceptionDto(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT,
                 e.getMessage()));
     }
+
 
 }

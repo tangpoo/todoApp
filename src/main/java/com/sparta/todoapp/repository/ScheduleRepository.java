@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    Optional<Schedule> findByIdAndUserId(Long id, Long user_id);
+    Optional<Schedule> findByIdAndMemberId(Long id, Long user_id);
 
-    Optional<List<Schedule>> findAllByUserIdOrderByIsCompletedAscModifiedAtDesc(Long id);
+    Optional<List<Schedule>> findAllByMemberIdOrderByIsCompletedAscModifiedAtDesc(Long id);
 }

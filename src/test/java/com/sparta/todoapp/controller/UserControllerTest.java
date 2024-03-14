@@ -1,10 +1,15 @@
 package com.sparta.todoapp.controller;
 
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.todoapp.common.UserTest;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
-import com.sparta.todoapp.entity.User;
+import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.mockito.BDDMockito.given;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 
 @WebMvcTest(UserController.class)
@@ -45,19 +45,19 @@ public class UserControllerTest implements UserTest {
         requestDto.setPassword(TEST_USER_PASSWORD);
         requestDto.setEmail(TEST_USER_EMAIL);
 
-        User user = User.builder()
+        Member member = Member.builder()
                 .username(TEST_USER_NAME)
                 .password(TEST_USER_PASSWORD)
                 .email(TEST_USER_EMAIL)
                 .role(UserRoleEnum.USER)
                 .build();
-        SignupResponseDto responseDto = new SignupResponseDto(user);
+        SignupResponseDto responseDto = new SignupResponseDto(member);
 
         given(userService.signup(requestDto)).willReturn(responseDto);
 
 
         //when + then
-        mvc.perform(post("/api/user/signup")
+        mvc.perform(post("/api/users/signup")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto))

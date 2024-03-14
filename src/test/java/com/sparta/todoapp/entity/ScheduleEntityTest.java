@@ -1,13 +1,13 @@
 package com.sparta.todoapp.entity;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ScheduleEntityTest {
     Schedule schedule;
@@ -18,7 +18,7 @@ public class ScheduleEntityTest {
                 .id(1L)
                 .title("Test Title")
                 .content("Test Content")
-                .user(new User())
+                .member(new Member())
                 .build();
     }
 

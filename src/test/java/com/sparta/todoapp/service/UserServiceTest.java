@@ -1,13 +1,18 @@
 package com.sparta.todoapp.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
 import com.sparta.todoapp.common.UserTest;
-import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
-import com.sparta.todoapp.entity.User;
+import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
-import com.sparta.todoapp.repository.UserRepository;
+import com.sparta.todoapp.repository.MemberRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,14 +24,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest implements UserTest {
 
@@ -34,7 +31,7 @@ public class UserServiceTest implements UserTest {
     UserService userService;
 
     @Mock
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @Mock
     PasswordEncoder passwordEncoder;
@@ -55,7 +52,7 @@ public class UserServiceTest implements UserTest {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        given(userRepository.findByUsername(username)).willReturn(Optional.of(new User()));
+        given(memberRepository.findByUsername(username)).willReturn(Optional.of(new Member()));
 
         //when + then
         assertThrows(DataIntegrityViolationException.class, () -> userService.signup(requestDto)) ;
@@ -74,8 +71,8 @@ public class UserServiceTest implements UserTest {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        given(userRepository.findByUsername(username)).willReturn(Optional.empty());
-        given(userRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.of(new User()));
+        given(memberRepository.findByUsername(username)).willReturn(Optional.empty());
+        given(memberRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.of(new Member()));
 
         //when + then
         assertThrows(DataIntegrityViolationException.class, () -> userService.signup(requestDto)) ;
@@ -96,8 +93,8 @@ public class UserServiceTest implements UserTest {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        given(userRepository.findByUsername(username)).willReturn(Optional.empty());
-        given(userRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.empty());
+        given(memberRepository.findByUsername(username)).willReturn(Optional.empty());
+        given(memberRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.empty());
 
         //when + then
         assertThrows(AccessDeniedException.class, () -> userService.signup(requestDto));
@@ -118,91 +115,91 @@ public class UserServiceTest implements UserTest {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        User user = User.builder()
+        Member member = Member.builder()
                 .username(username)
                 .email("test_email")
                 .password(password)
                 .role(UserRoleEnum.USER)
                 .build();
 
-        given(userRepository.findByUsername(username)).willReturn(Optional.empty());
-        given(userRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.empty());
-        given(userRepository.save(any(User.class))).willReturn(user);
+        given(memberRepository.findByUsername(username)).willReturn(Optional.empty());
+        given(memberRepository.findByEmail(requestDto.getEmail())).willReturn(Optional.empty());
+        given(memberRepository.save(any(Member.class))).willReturn(member);
 
         //when
         SignupResponseDto responseDto = userService.signup(requestDto);
 
         //then
         assertEquals(requestDto.getUsername(), responseDto.getUserName());
-        assertEquals(user.getUsername(), responseDto.getUserName());
+        assertEquals(member.getUsername(), responseDto.getUserName());
     }
 
-    @Test
-    @Transactional
-    @DisplayName("로그인 회원 찾기 실패")
-    void test5() {
-        //given
-        LoginRequestDto requestDto = new LoginRequestDto();
-        requestDto.setUsername(TEST_USER_NAME);
-        requestDto.setPassword(TEST_USER_PASSWORD);
+//    @Test
+//    @Transactional
+//    @DisplayName("로그인 회원 찾기 실패")
+//    void test5() {
+//        //given
+//        LoginRequestDto requestDto = new LoginRequestDto();
+//        requestDto.setUsername(TEST_USER_NAME);
+//        requestDto.setPassword(TEST_USER_PASSWORD);
+//
+//        Member member = Member.builder()
+//                .username(requestDto.getUsername())
+//                .email(TEST_USER_EMAIL)
+//                .password(requestDto.getPassword())
+//                .role(UserRoleEnum.USER)
+//                .build();
+//
+//        given(memberRepository.findByUsername(requestDto.getUsername())).willReturn(Optional.empty());
+//
+//        //when + then
+//        assertThrows(NoSuchElementException.class, () -> userService.login(requestDto));
+//    }
+//
+//    @Test
+//    @Transactional
+//    @DisplayName("로그인 비밀번호 틀림")
+//    void test6() {
+//        //given
+//        LoginRequestDto requestDto = new LoginRequestDto();
+//        requestDto.setUsername(TEST_USER_NAME);
+//        requestDto.setPassword(TEST_USER_PASSWORD);
+//
+//        Member member = Member.builder()
+//                .username(requestDto.getUsername())
+//                .email(TEST_USER_EMAIL)
+//                .password(ANOTHER_PREFIX + TEST_USER_PASSWORD)
+//                .role(UserRoleEnum.USER)
+//                .build();
+//
+//        given(memberRepository.findByUsername(requestDto.getUsername())).willReturn(Optional.of(member));
+//
+//        //when + then
+//        assertThrows(AccessDeniedException.class, () -> userService.login(requestDto));
+//    }
 
-        User user = User.builder()
-                .username(requestDto.getUsername())
-                .email(TEST_USER_EMAIL)
-                .password(requestDto.getPassword())
-                .role(UserRoleEnum.USER)
-                .build();
-
-        given(userRepository.findByUsername(requestDto.getUsername())).willReturn(Optional.empty());
-
-        //when + then
-        assertThrows(NoSuchElementException.class, () -> userService.login(requestDto));
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("로그인 비밀번호 틀림")
-    void test6() {
-        //given
-        LoginRequestDto requestDto = new LoginRequestDto();
-        requestDto.setUsername(TEST_USER_NAME);
-        requestDto.setPassword(TEST_USER_PASSWORD);
-
-        User user = User.builder()
-                .username(requestDto.getUsername())
-                .email(TEST_USER_EMAIL)
-                .password(ANOTHER_PREFIX + TEST_USER_PASSWORD)
-                .role(UserRoleEnum.USER)
-                .build();
-
-        given(userRepository.findByUsername(requestDto.getUsername())).willReturn(Optional.of(user));
-
-        //when + then
-        assertThrows(AccessDeniedException.class, () -> userService.login(requestDto));
-    }
-
-    @Test
-    @Transactional
-    @DisplayName("로그인 성공")
-    void test7() {
-        //given
-        LoginRequestDto requestDto = new LoginRequestDto();
-        requestDto.setUsername(TEST_USER_NAME);
-        requestDto.setPassword(TEST_USER_PASSWORD);
-
-        User user = User.builder()
-                .username(requestDto.getUsername())
-                .email(TEST_USER_EMAIL)
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .role(UserRoleEnum.USER)
-                .build();
-
-        given(userRepository.findByUsername(requestDto.getUsername())).willReturn(Optional.of(user));
-        given(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())).willReturn(true);
-        //when
-        String token = userService.login(requestDto);
-
-        //then
-
-    }
+//    @Test
+//    @Transactional
+//    @DisplayName("로그인 성공")
+//    void test7() {
+//        //given
+//        LoginRequestDto requestDto = new LoginRequestDto();
+//        requestDto.setUsername(TEST_USER_NAME);
+//        requestDto.setPassword(TEST_USER_PASSWORD);
+//
+//        User user = User.builder()
+//                .username(requestDto.getUsername())
+//                .email(TEST_USER_EMAIL)
+//                .password(passwordEncoder.encode(requestDto.getPassword()))
+//                .role(UserRoleEnum.USER)
+//                .build();
+//
+//        given(userRepository.findByUsername(requestDto.getUsername())).willReturn(Optional.of(user));
+//        given(passwordEncoder.matches(requestDto.getPassword(), user.getPassword())).willReturn(true);
+//        //when
+//        String token = userService.login(requestDto);
+//
+//        //then
+//
+//    }
 }

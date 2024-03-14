@@ -1,13 +1,20 @@
 package com.sparta.todoapp.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.todoapp.common.ScheduleTest;
-import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
+import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.Schedule;
-import com.sparta.todoapp.entity.User;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.service.ScheduleService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,20 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(ScheduleController.class)
@@ -42,7 +36,7 @@ public class ScheduleControllerTest implements ScheduleTest {
     @MockBean
     ScheduleService scheduleService;
 
-    User user;
+    Member member;
 
     @Autowired
     MockMvc mvc;
@@ -52,7 +46,7 @@ public class ScheduleControllerTest implements ScheduleTest {
 
     @BeforeEach
     void setup() {
-        user = User.builder()
+        member = Member.builder()
                 .username(TEST_USER_NAME)
                 .password(TEST_USER_PASSWORD)
                 .email(TEST_USER_EMAIL)
@@ -87,14 +81,14 @@ public class ScheduleControllerTest implements ScheduleTest {
         Schedule schedule = Schedule.builder()
                 .title(TEST_SCHEDULE_TITLE)
                 .content(TEST_SCHEDULE_CONTENT)
-                .user(user)
+                .member(member)
                 .build();
         ScheduleResponseDto responseDto = new ScheduleResponseDto(schedule);
 
         given(scheduleService.createSchedule(eq(accessToken), any(ScheduleRequestDto.class))).willReturn(responseDto);
 
         //when + then
-        mvc.perform(post("/api/schedule/new")
+        mvc.perform(post("/api/schedules/new")
                         .header("Authorization", accessToken)
                         .content(objectMapper.writeValueAsString(requestDto))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +105,7 @@ public class ScheduleControllerTest implements ScheduleTest {
         given(scheduleService.getScheduleById(eq(TEST_TOKEN), eq(TEST_SCHEDULE_ID))).willReturn(TEST_SCHEDULE_RESPONSE_DTO);
 
         //when
-        var action = mvc.perform(get("/api/schedule/{id}", TEST_SCHEDULE_ID)
+        var action = mvc.perform(get("/api/schedules/{id}", TEST_SCHEDULE_ID)
                 .header("Authorization", TEST_TOKEN)
                 .accept(MediaType.APPLICATION_JSON));
 
