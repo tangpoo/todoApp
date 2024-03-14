@@ -25,12 +25,8 @@ public class ReplyService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public ReplyResponseDto createReply(String accessToken, ReplyRequestDto requestDto, Long id) {
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
+    public ReplyResponseDto createReply(Member member, ReplyRequestDto requestDto, Long id) {
 
-        Member member = memberRepository.findByUsername(author)
-            .orElseThrow(() -> new NoSuchElementException("회원을 찾지 못했습니다.")
-            );
         Schedule schedule = scheduleRepository.findById(id)
             .orElseThrow(() -> new NoSuchElementException("일정을 찾지 못했습니다.")
             );
@@ -45,9 +41,8 @@ public class ReplyService {
     }
 
     @Transactional
-    public ReplyResponseDto updateReply(String accessToken, ReplyRequestDto requestDto,
+    public ReplyResponseDto updateReply(Member member, ReplyRequestDto requestDto,
         Long scheduleId, Long replyId) {
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
 
         Reply reply = replyRepository.findById(replyId)
             .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
@@ -55,7 +50,7 @@ public class ReplyService {
         scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
 
-        if (!author.equals(reply.getMember().getUsername())) {
+        if (!member.getId().equals(reply.getMember().getId())) {
             throw new AccessDeniedException("작성자만 수정할 수 있습니다.");
         }
 
@@ -63,16 +58,14 @@ public class ReplyService {
         return new ReplyResponseDto(reply);
     }
 
-    public void deleteReply(String accessToken, Long scheduleId, Long replyId) {
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
-
+    public void deleteReply(Member member, Long scheduleId, Long replyId) {
         Reply reply = replyRepository.findById(replyId)
             .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
 
         scheduleRepository.findById(scheduleId)
             .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
 
-        if (!author.equals(reply.getMember().getUsername())) {
+        if (!member.getId().equals(reply.getMember().getId())) {
             throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
         }
 

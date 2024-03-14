@@ -73,10 +73,6 @@ public class UserService {
     @Transactional
     public TokenDto reissue(TokenRequestDto tokenRequestDto){
 
-        if(!jwtUtil.validateToken(tokenRequestDto.getRefreshToken())){
-            throw new RuntimeException("Refresh Token 이 유효하지 않습니다.");
-        }
-
         String username = jwtUtil.getUserInfoFromToken(tokenRequestDto.getAccessToken());
 
         RefreshToken refreshToken = refreshTokenRepository.findByKey(username)

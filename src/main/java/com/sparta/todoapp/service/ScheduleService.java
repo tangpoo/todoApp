@@ -42,8 +42,7 @@ public class ScheduleService {
     private final JPAQueryFactory queryFactory;
 
     @Transactional
-    public ScheduleResponseDto createSchedule(String accessToken, ScheduleRequestDto requestDto) {
-        Member member = getUserByAccessToken(accessToken);
+    public ScheduleResponseDto createSchedule(Member member, ScheduleRequestDto requestDto) {
 
         Schedule schedule = Schedule.builder()
             .title(requestDto.getTitle())
@@ -54,8 +53,8 @@ public class ScheduleService {
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
     }
 
-    public ScheduleResponseDto getScheduleById(String accessToken, Long id) {
-        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+    public ScheduleResponseDto getScheduleById(Member member, Long id) {
+        Schedule schedule = getScheduleByTokenAndId(member.getId(), id);
         List<Reply> replies = replyRepository.findAllByScheduleId(schedule.getId());
 
         if (replies.size() > 0) {
@@ -65,8 +64,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
-    public Page<ScheduleResponseDto> getSchedules(String accessToken, Pageable pageable) {
-        Member member = getUserByAccessToken(accessToken);
+    public Page<ScheduleResponseDto> getSchedules(Member member, Pageable pageable) {
 
         QSchedule qSchedule = schedule;
 
@@ -103,9 +101,8 @@ public class ScheduleService {
         return new PageImpl<>(schedules, pageable, total);
     }
 
-    public Page<ScheduleResponseDto> getSearchSchedule(String accessToken, String type,
+    public Page<ScheduleResponseDto> getSearchSchedule(Member member, String type,
         String keyword, Pageable pageable) {
-        Member member = getUserByAccessToken(accessToken);
 
         QSchedule qSchedule = schedule;
 
@@ -141,9 +138,9 @@ public class ScheduleService {
     }
 
     @Transactional
-    public ScheduleResponseDto updateSchedule(String accessToken, ScheduleRequestDto requestDto,
+    public ScheduleResponseDto updateSchedule(Member member, ScheduleRequestDto requestDto,
         Long id, boolean isCompleted, boolean isPrivate) {
-        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+        Schedule schedule = getScheduleByTokenAndId(member.getId(), id);
 
         if (isCompleted) {
             schedule.changeIsCompleted(isCompleted);
@@ -158,16 +155,16 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void deleteSchedule(String accessToken, Long id) {
-        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+    public void deleteSchedule(Member member, Long id) {
+        Schedule schedule = getScheduleByTokenAndId(member.getId(), id);
 
         scheduleRepository.delete(schedule);
     }
 
     @Transactional
-    public void completedSchedule(String accessToken, Long id, boolean isCompleted,
+    public void completedSchedule(Member member , Long id, boolean isCompleted,
         boolean isPrivate) {
-        Schedule schedule = getScheduleByTokenAndId(accessToken, id);
+        Schedule schedule = getScheduleByTokenAndId(member.getId(), id);
 
         if (isCompleted) {
             schedule.changeIsCompleted(isCompleted);
@@ -181,19 +178,9 @@ public class ScheduleService {
 
     }
 
-    private Schedule getScheduleByTokenAndId(String accessToken, Long id) {
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
-        Member member = memberRepository.findByUsername(author).orElseThrow();
-
-        return scheduleRepository.findByIdAndMemberId(id, member.getId())
+    private Schedule getScheduleByTokenAndId(Long memberId, Long id) {
+        return scheduleRepository.findByIdAndMemberId(id, memberId)
             .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
-    }
-
-    private Member getUserByAccessToken(String accessToken){
-        String author = jwtUtil.getUserInfoFromToken(accessToken);
-        return memberRepository.findByUsername(author).orElseThrow(
-            () -> new NoSuchElementException("회원을 찾을 수 없습니다.")
-        );
     }
 
     private Map<Long, String> getReplyList(List<Reply> replies) {

@@ -17,9 +17,9 @@ import static com.sparta.todoapp.message.ScheduleMessage.SEARCH_SCHEDULE_SUCCESS
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.dto.ResponsePageDto;
 import com.sparta.todoapp.dto.SearchListDto;
-import com.sparta.todoapp.dto.schedule.ScheduleListResponseDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
+import com.sparta.todoapp.jwt.UserDetailsImpl;
 import com.sparta.todoapp.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -51,11 +52,11 @@ public class ScheduleController {
     @PostMapping("/new")
     @Operation(summary = CREATE_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> createSchedule(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestBody ScheduleRequestDto requestDto) {
         log.info(CREATE_SCHEDULE_API);
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(accessToken,
+        ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(userDetails.getMember(),
             requestDto);
 
         return ResponseEntity.created(createUri(scheduleResponseDto.getTodoId()))
@@ -68,34 +69,34 @@ public class ScheduleController {
     @GetMapping("/{id}")
     @Operation(summary = GET_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> getScheduleById(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long id) {
         log.info(GET_SCHEDULE_API);
 
         return ResponseEntity.ok()
             .body(ResponseDto.<ScheduleResponseDto>builder()
                 .message(GET_SCHEDULE_SUCCESS)
-                .data(scheduleService.getScheduleById(accessToken, id))
+                .data(scheduleService.getScheduleById(userDetails.getMember(), id))
                 .build());
     }
 
     @GetMapping
     @Operation(summary = GET_SCHEDULE_API)
     public ResponseEntity<ResponsePageDto<ScheduleResponseDto>> getSchedules(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         Pageable pageable) {
         log.info(GET_SCHEDULES_API);
 
         return ResponseEntity.ok()
             .body(ResponsePageDto.<ScheduleResponseDto>builder()
                 .message(GET_SCHEDULES_SUCCESS)
-                .data(scheduleService.getSchedules(accessToken, pageable))
+                .data(scheduleService.getSchedules(userDetails.getMember(), pageable))
                 .build());
     }
 
     @GetMapping("/search")
     public ResponseEntity<SearchListDto<ScheduleResponseDto>> getSearchSchedule(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @RequestParam("type") String type,
         @RequestParam("keyword") String keyword,
         Pageable pageable
@@ -104,7 +105,7 @@ public class ScheduleController {
 
         return ResponseEntity.ok()
             .body(SearchListDto.<ScheduleResponseDto>builder()
-                .dataList(scheduleService.getSearchSchedule(accessToken, type, keyword, pageable))
+                .dataList(scheduleService.getSearchSchedule(userDetails.getMember(), type, keyword, pageable))
                 .message(SEARCH_SCHEDULE_SUCCESS)
                 .build());
     }
@@ -112,7 +113,7 @@ public class ScheduleController {
     @PatchMapping("/update/{id}")
     @Operation(summary = PATCH_SCHEDULE_API)
     public ResponseEntity<ResponseDto<ScheduleResponseDto>> updateSchedule(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody ScheduleRequestDto requestDto,
         @PathVariable Long id,
         @RequestParam(required = false) boolean isCompleted,
@@ -120,7 +121,7 @@ public class ScheduleController {
     ) {
         log.info(PATCH_SCHEDULE_API);
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(accessToken,
+        ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(userDetails.getMember(),
             requestDto, id, isCompleted, isPrivate);
 
         return ResponseEntity.created(updateUri())
@@ -133,14 +134,14 @@ public class ScheduleController {
     @PatchMapping("/completed/{id}")
     @Operation(summary = PATCH_SCHEDULE_CHECK_API, description = PATCH_SCHEDULE_CHECK_DESCRIPTION)
     public ResponseEntity<Void> completedSchedule(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long id,
         @RequestParam(required = false) boolean isCompleted,
         @RequestParam(required = false) boolean isPrivate
     ) {
         log.info(PATCH_SCHEDULE_CHECK_API);
 
-        scheduleService.completedSchedule(accessToken, id, isCompleted, isPrivate);
+        scheduleService.completedSchedule(userDetails.getMember(), id, isCompleted, isPrivate);
 
         return ResponseEntity.noContent().build();
     }
@@ -148,11 +149,11 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     @Operation(summary = DELETE_SCHEDULE_API)
     public ResponseEntity<Void> deleteSchedule(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long id) {
         log.info(DELETE_SCHEDULE_API);
 
-        scheduleService.deleteSchedule(accessToken, id);
+        scheduleService.deleteSchedule(userDetails.getMember(), id);
 
         return ResponseEntity.noContent().build();
     }

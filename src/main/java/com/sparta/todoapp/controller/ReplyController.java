@@ -9,6 +9,7 @@ import static com.sparta.todoapp.message.ReplyMessage.PATCH_REPLY_SUCCESS;
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.dto.reply.ReplyRequestDto;
 import com.sparta.todoapp.dto.reply.ReplyResponseDto;
+import com.sparta.todoapp.jwt.UserDetailsImpl;
 import com.sparta.todoapp.service.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,12 +39,12 @@ public class ReplyController {
     @PostMapping("/{scheduleId}/new")
     @Operation(summary = CREATE_REPLY_API)
     public ResponseEntity<ResponseDto<ReplyResponseDto>> createReply(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody ReplyRequestDto requestDto,
         @PathVariable Long scheduleId) {
         log.info(CREATE_REPLY_API);
 
-        ReplyResponseDto responseDto = replyService.createReply(accessToken, requestDto,
+        ReplyResponseDto responseDto = replyService.createReply(userDetails.getMember(), requestDto,
             scheduleId);
 
         return ResponseEntity.created(createUri(responseDto.getId()))
@@ -55,14 +57,14 @@ public class ReplyController {
     @PatchMapping("/{scheduleId}/update/{replyId}")
     @Operation(summary = PATCH_REPLY_API)
     public ResponseEntity<ResponseDto<ReplyResponseDto>> updateReply(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @Valid @RequestBody ReplyRequestDto requestDto,
         @PathVariable Long scheduleId,
         @PathVariable Long replyId
     ) {
         log.info(PATCH_REPLY_API);
 
-        ReplyResponseDto responseDto = replyService.updateReply(accessToken, requestDto, scheduleId,
+        ReplyResponseDto responseDto = replyService.updateReply(userDetails.getMember(), requestDto, scheduleId,
             replyId);
 
         return ResponseEntity.created(updateUri())
@@ -75,13 +77,13 @@ public class ReplyController {
     @DeleteMapping("/{scheduleId}/delete/{replyId}")
     @Operation(summary = DELETE_REPLY_API)
     public ResponseEntity<Void> deleteReply(
-        @RequestHeader(value = "Authorization") String accessToken,
+        @AuthenticationPrincipal UserDetailsImpl userDetails,
         @PathVariable Long scheduleId,
         @PathVariable Long replyId
     ) {
         log.info(DELETE_REPLY_API);
 
-        replyService.deleteReply(accessToken, scheduleId, replyId);
+        replyService.deleteReply(userDetails.getMember(), scheduleId, replyId);
 
         return ResponseEntity.noContent().build();
     }
