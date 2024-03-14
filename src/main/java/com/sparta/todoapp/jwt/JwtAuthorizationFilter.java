@@ -44,7 +44,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             "/api/users/login"
         );
 
-        if ("GET".equals(method) || exemptedUrls.contains(requestURI)) {
+        if (exemptedUrls.contains(requestURI)) {
             // GET 요청이거나 exemptedUrls에 포함된 주소로 요청된 경우
             filterChain.doFilter(req, res); // 다음 필터로 요청 전달
             return;

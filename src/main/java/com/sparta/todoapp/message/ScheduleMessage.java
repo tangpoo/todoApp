@@ -9,7 +9,7 @@ public class ScheduleMessage {
     public static final String CREATE_SCHEDULE_SUCCESS = "스케줄 작성 성공";
 
     public static final String GET_SCHEDULE_API = "스케줄 조회 API";
-    public static final String GET_SCHEDULE_SUCCESS = "스케줄 작성 성공";
+    public static final String GET_SCHEDULE_SUCCESS = "스케줄 조회 성공";
 
     public static final String GET_SCHEDULES_API = "스케줄 목록 조회 API";
     public static final String GET_SCHEDULES_SUCCESS = "스케줄 목록 조회 성공";
