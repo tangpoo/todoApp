@@ -1,7 +1,6 @@
 package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.dto.TokenDto;
-import com.sparta.todoapp.dto.TokenRequestDto;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
@@ -11,23 +10,21 @@ import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.jwt.JwtUtil;
 import com.sparta.todoapp.repository.MemberRepository;
 import com.sparta.todoapp.repository.RefreshTokenRepository;
-import io.jsonwebtoken.Claims;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -71,22 +68,26 @@ public class UserService {
     }
 
     @Transactional
-    public TokenDto reissue(TokenRequestDto tokenRequestDto){
+    public TokenDto login(LoginRequestDto requestDto) {
+        Member member = memberRepository.findByUsername(requestDto.getUsername())
+            .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
 
-        String username = jwtUtil.getUserInfoFromToken(tokenRequestDto.getAccessToken());
-
-        RefreshToken refreshToken = refreshTokenRepository.findByKey(username)
-            .orElseThrow(() -> new RuntimeException("로그아웃 된 사용자입니다."));
-
-        if(!refreshToken.getValue().equals(tokenRequestDto.getRefreshToken())){
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+        if (!passwordEncoder.matches(requestDto.getPassword(), member.getPassword())) {
+            throw new AccessDeniedException("비밀번호가 일치하지 않습니다.");
         }
 
-        TokenDto tokenDto = jwtUtil.createToken(username);
+        String accessToken = jwtUtil.createToken(member);
+        String refreshToken = jwtUtil.createRefreshToken(member);
+        RefreshToken tokenEntity = RefreshToken.builder()
+            .refreshToken(refreshToken)
+            .member(member)
+            .build();
 
-        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-        refreshTokenRepository.save(newRefreshToken);
+        refreshTokenRepository.findByMemberId(member.getId()).ifPresentOrElse(
+            (findTokenPair) -> findTokenPair.refreshUpdate(refreshToken),
+            () -> refreshTokenRepository.save(tokenEntity)
+        );
 
-        return tokenDto;
+        return new TokenDto(accessToken, refreshToken);
     }
 }

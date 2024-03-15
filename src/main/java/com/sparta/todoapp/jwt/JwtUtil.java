@@ -1,7 +1,6 @@
 package com.sparta.todoapp.jwt;
 
-import com.sparta.todoapp.dto.TokenDto;
-import com.sparta.todoapp.entity.UserRoleEnum;
+import com.sparta.todoapp.entity.Member;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -14,6 +13,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,29 +45,27 @@ public class JwtUtil {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    public TokenDto createToken(String username) {
-        long now = (new Date()).getTime();
+    public String createToken(Member member) {
+        Date expireDate = createExpireDate(TOKEN_TIME);
 
-        Date accessTokenExpiresIn = new Date(now + TOKEN_TIME);
-        String accessToken =  BEARER_PREFIX +
+        return BEARER_PREFIX +
             Jwts.builder()
-                .setSubject(username)
-                .setExpiration(accessTokenExpiresIn)
+                .setSubject(member.getUsername())
+                .setExpiration(expireDate)
                 .signWith(key, signatureAlgorithm)
                 .compact();
+    }
 
-        String refreshToken =
-            Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_TIME))
-                .signWith(key, signatureAlgorithm)
-                .compact();
+    public String createRefreshToken(Member member) {
+        Date expireDate = createExpireDate(REFRESH_TOKEN_TIME);
 
-        return TokenDto.builder()
-            .grantType(BEARER_PREFIX)
-            .accessToken(accessToken)
-            .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
-            .refreshToken(refreshToken)
-            .build();
+        return Jwts.builder()
+            .setSubject(member.getUsername())
+            .setHeader(createHeader())
+            .setClaims(createClaims(member))
+            .setExpiration(expireDate)
+            .signWith(key, signatureAlgorithm)
+            .compact();
     }
 
     // 토큰 뽑아오기
@@ -95,8 +94,41 @@ public class JwtUtil {
         return false;
     }
 
-    public String getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
-            .getBody().getSubject();
+    private Date createExpireDate(long expireDate) {
+        long curTime = (new Date()).getTime();
+        return new Date(curTime + expireDate);
+    }
+
+    private Map<String, Object> createHeader() {
+        Map<String, Object> header = new HashMap<>();
+
+        header.put("typ", "ACCESS_TOKEN");
+        header.put("alg", "HS256");
+        header.put("redDate", System.currentTimeMillis());
+
+        return header;
+    }
+
+    private Map<String, Object> createClaims(Member member) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(AUTHORIZATION_KEY, member.getId());
+
+        return claims;
+    }
+
+    public Claims getClaimsFormToken(String accessToken) {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(accessToken)
+            .getBody();
+    }
+
+    private Claims getClaimsFormRefreshToken(String refreshToken) {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(refreshToken)
+            .getBody();
     }
 }

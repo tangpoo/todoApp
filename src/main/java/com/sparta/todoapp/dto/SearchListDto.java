@@ -12,7 +12,7 @@ import org.springframework.data.domain.Page;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SearchListDto <T> {
+public class SearchListDto<T> {
 
     private Page<T> dataList;
 

@@ -1,38 +1,39 @@
 package com.sparta.todoapp.entity;
 
-import com.sparta.todoapp.exceptionHandler.InvalidRefreshTokenException;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Table(name = "refresh_token")
 public class RefreshToken {
 
     @Id
-    @Column(name = "rt_key")
-    private String key;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "rt_value")
-    private String value;
+    private String refreshToken;
 
-    protected RefreshToken() {
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private Member member;
 
     @Builder
-    public RefreshToken(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public RefreshToken(String refreshToken, Member member) {
+        this.refreshToken = refreshToken;
+        this.member = member;
     }
 
-    public RefreshToken updateValue(String token){
-        this.value = token;
-        return this;
+    public void refreshUpdate(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

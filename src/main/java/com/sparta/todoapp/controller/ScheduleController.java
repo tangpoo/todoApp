@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +55,8 @@ public class ScheduleController {
         @RequestBody ScheduleRequestDto requestDto) {
         log.info(CREATE_SCHEDULE_API);
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(userDetails.getMember(),
+        ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(
+            userDetails.getMember(),
             requestDto);
 
         return ResponseEntity.created(createUri(scheduleResponseDto.getTodoId()))
@@ -100,12 +100,13 @@ public class ScheduleController {
         @RequestParam("type") String type,
         @RequestParam("keyword") String keyword,
         Pageable pageable
-        ){
+    ) {
         log.info(SEARCH_SCHEDULE_API);
 
         return ResponseEntity.ok()
             .body(SearchListDto.<ScheduleResponseDto>builder()
-                .dataList(scheduleService.getSearchSchedule(userDetails.getMember(), type, keyword, pageable))
+                .dataList(scheduleService.getSearchSchedule(userDetails.getMember(), type, keyword,
+                    pageable))
                 .message(SEARCH_SCHEDULE_SUCCESS)
                 .build());
     }
@@ -121,7 +122,8 @@ public class ScheduleController {
     ) {
         log.info(PATCH_SCHEDULE_API);
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(userDetails.getMember(),
+        ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(
+            userDetails.getMember(),
             requestDto, id, isCompleted, isPrivate);
 
         return ResponseEntity.created(updateUri())

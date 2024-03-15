@@ -1,13 +1,12 @@
 package com.sparta.todoapp.controller;
 
-import static com.sparta.todoapp.message.UserMessage.LOGIN_API;
+import static com.sparta.todoapp.jwt.JwtUtil.AUTHORIZATION_HEADER;
 import static com.sparta.todoapp.message.UserMessage.LOGIN_SUCCESS;
 import static com.sparta.todoapp.message.UserMessage.SIGN_UP_API;
 import static com.sparta.todoapp.message.UserMessage.SIGN_UP_SUCCESS;
 
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.dto.TokenDto;
-import com.sparta.todoapp.dto.TokenRequestDto;
 import com.sparta.todoapp.dto.user.LoginRequestDto;
 import com.sparta.todoapp.dto.user.SignupRequestDto;
 import com.sparta.todoapp.dto.user.SignupResponseDto;
@@ -16,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,11 +41,12 @@ public class UserController {
                 .build());
     }
 
-    @PostMapping("/reissue")
-    public ResponseEntity<ResponseDto<Void>> reissue(@RequestBody TokenRequestDto tokenRequestDto){
-        TokenDto token = userService.reissue(tokenRequestDto);
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto<Void>> login(@RequestBody LoginRequestDto requestDto) {
+        TokenDto token = userService.login(requestDto);
+
         return ResponseEntity.ok()
-            .header(HttpHeaders.AUTHORIZATION, token.getAccessToken())
+            .header(AUTHORIZATION_HEADER, token.getAccessToken())
             .header("X-Refresh-Token", token.getRefreshToken())
             .body(ResponseDto.<Void>builder()
                 .message(LOGIN_SUCCESS)

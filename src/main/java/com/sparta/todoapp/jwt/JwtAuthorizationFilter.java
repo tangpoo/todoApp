@@ -36,7 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res,
         FilterChain filterChain) throws ServletException, IOException {
 
-        String method = req.getMethod();
+//        String method = req.getMethod();
         String requestURI = req.getRequestURI();
 
         List<String> exemptedUrls = Arrays.asList(
@@ -45,7 +45,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         );
 
         if (exemptedUrls.contains(requestURI)) {
-            // GET 요청이거나 exemptedUrls에 포함된 주소로 요청된 경우
+            // exemptedUrls에 포함된 주소로 요청된 경우
             filterChain.doFilter(req, res); // 다음 필터로 요청 전달
             return;
         }
@@ -63,11 +63,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             sendErrorResponse(res, "토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
             return;
         }
+        log.info(tokenValue);
 
-        String username = jwtUtil.getUserInfoFromToken(tokenValue);
+        Claims claims = jwtUtil.getClaimsFormToken(tokenValue);
+        log.info(claims.getSubject());
 
         try {
-            setAuthentication(username);
+            setAuthentication(claims.getSubject());
         } catch (Exception e) {
             log.error(e.getMessage());
             sendErrorResponse(res, "인증 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,7 +79,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(req, res);
     }
 
-    private void sendErrorResponse(HttpServletResponse res, String errorMessage, HttpStatus status) throws IOException {
+    private void sendErrorResponse(HttpServletResponse res, String errorMessage, HttpStatus status)
+        throws IOException {
         res.setStatus(status.value());
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");

@@ -162,7 +162,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void completedSchedule(Member member , Long id, boolean isCompleted,
+    public void completedSchedule(Member member, Long id, boolean isCompleted,
         boolean isPrivate) {
         Schedule schedule = getScheduleByTokenAndId(member.getId(), id);
 
@@ -192,20 +192,20 @@ public class ScheduleService {
         return replyList;
     }
 
-    private BooleanExpression eqType(String type, String keyword){
+    private BooleanExpression eqType(String type, String keyword) {
 
         // 하나가 null 일 경우 다른 하나로만 검색
         // 둘다 null 일 경우 모든 게시글 조회
 
-        if(type.isEmpty() || keyword.isEmpty()){
+        if (type.isEmpty() || keyword.isEmpty()) {
             return Expressions.asBoolean(false);
         }
 
-        if(type.equals("title")){
+        if (type.equals("title")) {
             return schedule.title.contains(keyword);
         }
 
-        if(type.equals("content")){
+        if (type.equals("content")) {
             return schedule.content.contains(keyword);
         }
 

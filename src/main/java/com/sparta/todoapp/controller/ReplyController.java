@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -64,7 +63,8 @@ public class ReplyController {
     ) {
         log.info(PATCH_REPLY_API);
 
-        ReplyResponseDto responseDto = replyService.updateReply(userDetails.getMember(), requestDto, scheduleId,
+        ReplyResponseDto responseDto = replyService.updateReply(userDetails.getMember(), requestDto,
+            scheduleId,
             replyId);
 
         return ResponseEntity.created(updateUri())
