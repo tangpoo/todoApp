@@ -61,8 +61,6 @@ public class JwtUtil {
 
         return Jwts.builder()
             .setSubject(member.getUsername())
-            .setHeader(createHeader())
-            .setClaims(createClaims(member))
             .setExpiration(expireDate)
             .signWith(key, signatureAlgorithm)
             .compact();
@@ -124,11 +122,14 @@ public class JwtUtil {
             .getBody();
     }
 
-    private Claims getClaimsFormRefreshToken(String refreshToken) {
+//    후에 AccessToken 과 RefreshToken 의 key 값을 공유하지 않을 가능성을 고려하여 메서드 분리
+
+    public Claims getClaimsFormRefreshToken(String refreshToken) {
         return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()
             .parseClaimsJws(refreshToken)
             .getBody();
     }
+
 }

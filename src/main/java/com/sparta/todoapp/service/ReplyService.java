@@ -1,74 +1,47 @@
 package com.sparta.todoapp.service;
 
-import com.sparta.todoapp.dto.reply.ReplyRequestDto;
-import com.sparta.todoapp.dto.reply.ReplyResponseDto;
-import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.Reply;
-import com.sparta.todoapp.entity.Schedule;
-import com.sparta.todoapp.jwt.JwtUtil;
-import com.sparta.todoapp.repository.MemberRepository;
 import com.sparta.todoapp.repository.ReplyRepository;
-import com.sparta.todoapp.repository.ScheduleRepository;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ReplyService {
 
-    private final MemberRepository memberRepository;
-    private final ScheduleRepository scheduleRepository;
     private final ReplyRepository replyRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional
-    public ReplyResponseDto createReply(Member member, ReplyRequestDto requestDto, Long id) {
-
-        Schedule schedule = scheduleRepository.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("일정을 찾지 못했습니다.")
-            );
-
-        Reply reply = Reply.builder()
-            .content(requestDto.getContent())
-            .member(member)
-            .schedule(schedule)
-            .build();
-
-        return new ReplyResponseDto(replyRepository.save(reply));
+    public Reply createReply(Reply reply) {
+        return replyRepository.save(reply);
     }
 
     @Transactional
-    public ReplyResponseDto updateReply(Member member, ReplyRequestDto requestDto,
-        Long scheduleId, Long replyId) {
-
-        Reply reply = replyRepository.findById(replyId)
-            .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
-
-        scheduleRepository.findById(scheduleId)
-            .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
-
-        if (!member.getId().equals(reply.getMember().getId())) {
-            throw new AccessDeniedException("작성자만 수정할 수 있습니다.");
-        }
-
-        reply.update(requestDto);
-        return new ReplyResponseDto(reply);
-    }
-
-    public void deleteReply(Member member, Long scheduleId, Long replyId) {
-        Reply reply = replyRepository.findById(replyId)
-            .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
-
-        scheduleRepository.findById(scheduleId)
-            .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));
-
-        if (!member.getId().equals(reply.getMember().getId())) {
-            throw new AccessDeniedException("작성자만 삭제할 수 있습니다.");
-        }
-
+    public void deleteReply(Reply reply) {
         replyRepository.delete(reply);
+    }
+
+    public Reply findById(Long id) {
+        return replyRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("댓글이 존재하지 않습니다."));
+    }
+
+    public List<Reply> findByScheduleId(Long scheduleId) {
+        return replyRepository.findAllByScheduleId(scheduleId);
+    }
+
+    public Map<Long, String> getReplyList(List<Reply> replies) {
+        Map<Long, String> replyList = new LinkedHashMap<>();
+        for (Reply reply : replies) {
+            replyList.put(reply.getId(), reply.getContent());
+        }
+
+        return replyList;
     }
 }

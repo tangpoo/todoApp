@@ -19,8 +19,8 @@ import com.sparta.todoapp.dto.ResponsePageDto;
 import com.sparta.todoapp.dto.SearchListDto;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
+import com.sparta.todoapp.facade.ScheduleFacade;
 import com.sparta.todoapp.jwt.UserDetailsImpl;
-import com.sparta.todoapp.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -46,7 +46,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/api/schedules")
 public class ScheduleController {
 
-    private final ScheduleService scheduleService;
+    private final ScheduleFacade scheduleFacade;
 
     @PostMapping("/new")
     @Operation(summary = CREATE_SCHEDULE_API)
@@ -55,7 +55,7 @@ public class ScheduleController {
         @RequestBody ScheduleRequestDto requestDto) {
         log.info(CREATE_SCHEDULE_API);
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.createSchedule(
+        ScheduleResponseDto scheduleResponseDto = scheduleFacade.createSchedule(
             userDetails.getMember(),
             requestDto);
 
@@ -76,7 +76,7 @@ public class ScheduleController {
         return ResponseEntity.ok()
             .body(ResponseDto.<ScheduleResponseDto>builder()
                 .message(GET_SCHEDULE_SUCCESS)
-                .data(scheduleService.getScheduleById(userDetails.getMember(), id))
+                .data(scheduleFacade.getScheduleById(userDetails.getMember(), id))
                 .build());
     }
 
@@ -90,7 +90,7 @@ public class ScheduleController {
         return ResponseEntity.ok()
             .body(ResponsePageDto.<ScheduleResponseDto>builder()
                 .message(GET_SCHEDULES_SUCCESS)
-                .data(scheduleService.getSchedules(userDetails.getMember(), pageable))
+                .data(scheduleFacade.getSchedules(userDetails.getMember(), pageable))
                 .build());
     }
 
@@ -105,7 +105,7 @@ public class ScheduleController {
 
         return ResponseEntity.ok()
             .body(SearchListDto.<ScheduleResponseDto>builder()
-                .dataList(scheduleService.getSearchSchedule(userDetails.getMember(), type, keyword,
+                .dataList(scheduleFacade.getSearchSchedule(userDetails.getMember(), type, keyword,
                     pageable))
                 .message(SEARCH_SCHEDULE_SUCCESS)
                 .build());
@@ -122,9 +122,13 @@ public class ScheduleController {
     ) {
         log.info(PATCH_SCHEDULE_API);
 
-        ScheduleResponseDto scheduleResponseDto = scheduleService.updateSchedule(
+        ScheduleResponseDto scheduleResponseDto = scheduleFacade.updateSchedule(
             userDetails.getMember(),
-            requestDto, id, isCompleted, isPrivate);
+            requestDto,
+            id,
+            isCompleted,
+            isPrivate
+        );
 
         return ResponseEntity.created(updateUri())
             .body(ResponseDto.<ScheduleResponseDto>builder()
@@ -143,7 +147,7 @@ public class ScheduleController {
     ) {
         log.info(PATCH_SCHEDULE_CHECK_API);
 
-        scheduleService.completedSchedule(userDetails.getMember(), id, isCompleted, isPrivate);
+        scheduleFacade.completedSchedule(userDetails.getMember(), id, isCompleted, isPrivate);
 
         return ResponseEntity.noContent().build();
     }
@@ -155,7 +159,7 @@ public class ScheduleController {
         @PathVariable Long id) {
         log.info(DELETE_SCHEDULE_API);
 
-        scheduleService.deleteSchedule(userDetails.getMember(), id);
+        scheduleFacade.deleteSchedule(userDetails.getMember(), id);
 
         return ResponseEntity.noContent().build();
     }

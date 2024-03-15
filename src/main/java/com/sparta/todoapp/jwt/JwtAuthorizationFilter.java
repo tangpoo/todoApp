@@ -63,10 +63,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             sendErrorResponse(res, "토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
             return;
         }
-        log.info(tokenValue);
 
         Claims claims = jwtUtil.getClaimsFormToken(tokenValue);
-        log.info(claims.getSubject());
 
         try {
             setAuthentication(claims.getSubject());

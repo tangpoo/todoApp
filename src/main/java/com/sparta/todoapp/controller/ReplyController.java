@@ -9,8 +9,8 @@ import static com.sparta.todoapp.message.ReplyMessage.PATCH_REPLY_SUCCESS;
 import com.sparta.todoapp.dto.ResponseDto;
 import com.sparta.todoapp.dto.reply.ReplyRequestDto;
 import com.sparta.todoapp.dto.reply.ReplyResponseDto;
+import com.sparta.todoapp.facade.ReplyFacade;
 import com.sparta.todoapp.jwt.UserDetailsImpl;
-import com.sparta.todoapp.service.ReplyService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -33,7 +33,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/api/schedules")
 public class ReplyController {
 
-    private final ReplyService replyService;
+    private final ReplyFacade replyFacade;
 
     @PostMapping("/{scheduleId}/new")
     @Operation(summary = CREATE_REPLY_API)
@@ -43,7 +43,7 @@ public class ReplyController {
         @PathVariable Long scheduleId) {
         log.info(CREATE_REPLY_API);
 
-        ReplyResponseDto responseDto = replyService.createReply(userDetails.getMember(), requestDto,
+        ReplyResponseDto responseDto = replyFacade.createReply(userDetails.getMember(), requestDto,
             scheduleId);
 
         return ResponseEntity.created(createUri(responseDto.getId()))
@@ -63,7 +63,7 @@ public class ReplyController {
     ) {
         log.info(PATCH_REPLY_API);
 
-        ReplyResponseDto responseDto = replyService.updateReply(userDetails.getMember(), requestDto,
+        ReplyResponseDto responseDto = replyFacade.updateReply(userDetails.getMember(), requestDto,
             scheduleId,
             replyId);
 
@@ -83,7 +83,7 @@ public class ReplyController {
     ) {
         log.info(DELETE_REPLY_API);
 
-        replyService.deleteReply(userDetails.getMember(), scheduleId, replyId);
+        replyFacade.deleteReply(userDetails.getMember(), scheduleId, replyId);
 
         return ResponseEntity.noContent().build();
     }
