@@ -5,6 +5,7 @@ import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.repository.ScheduleRepository;
+import com.sparta.todoapp.service.port.ScheduleService;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ScheduleService {
+public class ScheduleServiceImpl implements ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
+    @Override
     @Transactional
     public ScheduleResponseDto createSchedule(Member member, ScheduleRequestDto requestDto) {
 
@@ -31,6 +33,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(scheduleRepository.save(schedule));
     }
 
+    @Override
     @Transactional
     public ScheduleResponseDto updateSchedule(Member member, ScheduleRequestDto requestDto,
         Long id, boolean isCompleted, boolean isPrivate) {
@@ -48,6 +51,7 @@ public class ScheduleService {
         return new ScheduleResponseDto(schedule);
     }
 
+    @Override
     @Transactional
     public void deleteSchedule(Member member, Long id) {
         Schedule schedule = getScheduleByMemberIdAndId(member.getId(), id);
@@ -55,6 +59,7 @@ public class ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
+    @Override
     @Transactional
     public void completedSchedule(Member member, Long id, boolean isCompleted,
         boolean isPrivate) {
@@ -72,6 +77,7 @@ public class ScheduleService {
 
     }
 
+    @Override
     public Schedule getScheduleByMemberIdAndId(Long memberId, Long id) {
         return scheduleRepository.findByIdAndMemberId(id, memberId)
             .orElseThrow(() -> new NoSuchElementException("일정이 존재하지 않습니다."));

@@ -31,7 +31,7 @@
 //class ReplyServiceTest {
 //
 //    @InjectMocks
-//    ReplyService replyService;
+//    ReplyServiceImpl replyService;
 //
 //    @Mock
 //    MemberRepository memberRepository;

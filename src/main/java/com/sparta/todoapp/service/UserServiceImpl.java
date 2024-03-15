@@ -2,6 +2,7 @@ package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.repository.MemberRepository;
+import com.sparta.todoapp.service.port.UserService;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private final MemberRepository memberRepository;
 
