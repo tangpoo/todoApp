@@ -15,6 +15,7 @@ import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.exceptionHandler.NotFindFilterException;
 import com.sparta.todoapp.repository.port.QueryRepository;
 import com.sparta.todoapp.service.ReplyServiceImpl;
+import com.sparta.todoapp.service.port.ReplyService;
 import com.sparta.todoapp.service.port.ScheduleService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ import org.springframework.stereotype.Component;
 public class ScheduleFacadeImpl implements ScheduleFacade {
 
     private final ScheduleService scheduleService;
-    private final ReplyServiceImpl replyServiceImpl;
+    private final ReplyService replyService;
     private final QueryRepository queryRepository;
 
     @Override
@@ -38,10 +39,10 @@ public class ScheduleFacadeImpl implements ScheduleFacade {
 
     public ScheduleResponseDto getScheduleById(Member member, Long id) {
         Schedule schedule = scheduleService.getScheduleByMemberIdAndId(member.getId(), id);
-        List<Reply> replies = replyServiceImpl.findByScheduleId(schedule.getId());
+        List<Reply> replies = replyService.findByScheduleId(schedule.getId());
 
         if (!replies.isEmpty()) {
-            return new ScheduleResponseDto(schedule, replyServiceImpl.getReplyList(replies));
+            return new ScheduleResponseDto(schedule, replyService.getReplyList(replies));
         }
 
         return new ScheduleResponseDto(schedule);
