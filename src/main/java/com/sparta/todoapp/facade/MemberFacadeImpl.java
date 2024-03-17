@@ -9,7 +9,7 @@ import com.sparta.todoapp.entity.RefreshToken;
 import com.sparta.todoapp.entity.UserRoleEnum;
 import com.sparta.todoapp.exceptionHandler.UnAuthorizationException;
 import com.sparta.todoapp.jwt.JwtUtil;
-import com.sparta.todoapp.repository.RefreshTokenRepository;
+import com.sparta.todoapp.repository.port.RefreshTokenRepository;
 import com.sparta.todoapp.service.port.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

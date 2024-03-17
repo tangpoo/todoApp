@@ -1,7 +1,7 @@
 package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.entity.Reply;
-import com.sparta.todoapp.repository.ReplyRepository;
+import com.sparta.todoapp.repository.port.ReplyRepository;
 import com.sparta.todoapp.service.port.ReplyService;
 import java.util.LinkedHashMap;
 import java.util.List;

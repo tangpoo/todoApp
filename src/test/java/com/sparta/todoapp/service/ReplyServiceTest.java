@@ -14,9 +14,9 @@
 //import com.sparta.todoapp.entity.Schedule;
 //import com.sparta.todoapp.entity.UserRoleEnum;
 //import com.sparta.todoapp.jwt.JwtUtil;
-//import com.sparta.todoapp.repository.MemberRepository;
-//import com.sparta.todoapp.repository.ReplyRepository;
-//import com.sparta.todoapp.repository.ScheduleRepository;
+//import com.sparta.todoapp.repository.port.MemberRepository;
+//import com.sparta.todoapp.repository.port.ReplyRepository;
+//import com.sparta.todoapp.repository.port.ScheduleRepository;
 //import java.util.NoSuchElementException;
 //import java.util.Optional;
 //import org.junit.jupiter.api.DisplayName;

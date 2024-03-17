@@ -4,7 +4,7 @@ import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.Schedule;
-import com.sparta.todoapp.repository.ScheduleRepository;
+import com.sparta.todoapp.repository.port.ScheduleRepository;
 import com.sparta.todoapp.service.port.ScheduleService;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;

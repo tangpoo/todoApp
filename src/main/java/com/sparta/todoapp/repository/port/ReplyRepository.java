@@ -1,4 +1,4 @@
-package com.sparta.todoapp.repository;
+package com.sparta.todoapp.repository.port;
 
 import com.sparta.todoapp.entity.Reply;
 import java.util.List;

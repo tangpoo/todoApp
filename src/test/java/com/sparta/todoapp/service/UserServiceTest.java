@@ -11,7 +11,7 @@
 //import com.sparta.todoapp.entity.Member;
 //import com.sparta.todoapp.entity.UserRoleEnum;
 //import com.sparta.todoapp.jwt.JwtUtil;
-//import com.sparta.todoapp.repository.MemberRepository;
+//import com.sparta.todoapp.repository.port.MemberRepository;
 //import java.util.Optional;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;

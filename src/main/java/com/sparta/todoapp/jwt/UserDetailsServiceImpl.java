@@ -1,7 +1,7 @@
 package com.sparta.todoapp.jwt;
 
 import com.sparta.todoapp.entity.Member;
-import com.sparta.todoapp.repository.MemberRepository;
+import com.sparta.todoapp.repository.port.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

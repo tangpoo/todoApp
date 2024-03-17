@@ -3,7 +3,7 @@ package com.sparta.todoapp.aop;
 import com.sparta.todoapp.entity.ApiUseTime;
 import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.jwt.UserDetailsImpl;
-import com.sparta.todoapp.repository.ApiUseTimeRepository;
+import com.sparta.todoapp.repository.port.ApiUseTimeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

@@ -1,7 +1,7 @@
 package com.sparta.todoapp.service;
 
 import com.sparta.todoapp.entity.Member;
-import com.sparta.todoapp.repository.MemberRepository;
+import com.sparta.todoapp.repository.port.MemberRepository;
 import com.sparta.todoapp.service.port.UserService;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
