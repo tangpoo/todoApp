@@ -1,26 +1,16 @@
 package com.sparta.todoapp.facade;
 
-import static com.querydsl.core.types.Projections.fields;
-import static com.sparta.todoapp.entity.QSchedule.schedule;
-
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.todoapp.dto.schedule.ScheduleRequestDto;
 import com.sparta.todoapp.dto.schedule.ScheduleResponseDto;
 import com.sparta.todoapp.entity.Member;
-import com.sparta.todoapp.entity.QSchedule;
 import com.sparta.todoapp.entity.Reply;
 import com.sparta.todoapp.entity.Schedule;
-import com.sparta.todoapp.exceptionHandler.NotFindFilterException;
 import com.sparta.todoapp.repository.port.QueryRepository;
-import com.sparta.todoapp.service.ReplyServiceImpl;
 import com.sparta.todoapp.service.port.ReplyService;
 import com.sparta.todoapp.service.port.ScheduleService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 

@@ -38,5 +38,11 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
+    private Long kakaoId;
 
+
+    public Member kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
 }
