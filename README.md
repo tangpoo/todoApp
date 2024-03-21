@@ -45,3 +45,4 @@ tangpoo의 back-end 개인프로젝트 todoApp 의 README 입니다.
 - 2024-03-15 : 로그인 환경 변화로 인한 주석처리
 - 2024-03-15 : refreshToken 구현
 - 2024-03-17 : 유저 별 사용시간 aop 구현
+- 2024-03-21 : Redis 적용(RefreshToken, 스케줄 조회)
