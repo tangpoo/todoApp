@@ -13,6 +13,7 @@ import com.sparta.todoapp.exceptionHandler.NotFindFilterException;
 import com.sparta.todoapp.repository.port.QueryRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class QueryRepositoryImpl implements QueryRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
+    @Cacheable(cacheNames = "getSchedules", key = "#member.id", cacheManager = "rcm")
     public Page<ScheduleResponseDto> getSchedules(Member member, Pageable pageable) {
         QSchedule qSchedule = schedule;
 

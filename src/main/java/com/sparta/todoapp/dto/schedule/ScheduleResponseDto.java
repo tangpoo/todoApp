@@ -1,5 +1,9 @@
 package com.sparta.todoapp.dto.schedule;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.sparta.todoapp.entity.Schedule;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -21,6 +25,8 @@ public class ScheduleResponseDto {
     private String title;
     private String content;
     private String author;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime date;
     @Builder.Default
     private Map<Long, String> replyList = new LinkedHashMap<>();
