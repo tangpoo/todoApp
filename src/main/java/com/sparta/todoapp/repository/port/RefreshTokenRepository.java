@@ -2,9 +2,11 @@ package com.sparta.todoapp.repository.port;
 
 import com.sparta.todoapp.entity.RefreshToken;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
+@Repository
+public interface RefreshTokenRepository extends CrudRepository<RefreshToken, Long> {
 
     Optional<RefreshToken> findByMemberId(Long id);
 }
