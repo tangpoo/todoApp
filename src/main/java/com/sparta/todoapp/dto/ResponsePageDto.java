@@ -1,5 +1,6 @@
 package com.sparta.todoapp.dto;
 
+import com.sparta.todoapp.util.RestPage;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,5 +12,5 @@ import org.springframework.data.domain.Page;
 public class ResponsePageDto<T> {
 
     private String message;
-    private Page<T> data;
+    private RestPage<T> data;
 }

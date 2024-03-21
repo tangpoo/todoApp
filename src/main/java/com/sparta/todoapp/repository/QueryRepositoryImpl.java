@@ -11,6 +11,7 @@ import com.sparta.todoapp.entity.Member;
 import com.sparta.todoapp.entity.QSchedule;
 import com.sparta.todoapp.exceptionHandler.NotFindFilterException;
 import com.sparta.todoapp.repository.port.QueryRepository;
+import com.sparta.todoapp.util.RestPage;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,7 +28,7 @@ public class QueryRepositoryImpl implements QueryRepository {
 
     @Override
     @Cacheable(cacheNames = "getSchedules", key = "#member.id", cacheManager = "rcm")
-    public Page<ScheduleResponseDto> getSchedules(Member member, Pageable pageable) {
+    public RestPage<ScheduleResponseDto> getSchedules(Member member, Pageable pageable) {
         QSchedule qSchedule = schedule;
 
         List<ScheduleResponseDto> schedules =
@@ -60,11 +61,12 @@ public class QueryRepositoryImpl implements QueryRepository {
 //        ScheduleListResponseDto responseDto = new ScheduleListResponseDto(user.getUsername(),
 //            schedules.stream().map(ScheduleResponseDto::new).toList());
 
-        return new PageImpl<>(schedules, pageable, total);
+        return new RestPage<>(new PageImpl<>(schedules, pageable, total));
     }
 
     @Override
-    public Page<ScheduleResponseDto> getSearchSchedule(Member member, String type, String keyword,
+    @Cacheable(cacheNames = "getSearchSchedule", key = "#member.id", cacheManager = "rcm")
+    public RestPage<ScheduleResponseDto> getSearchSchedule(Member member, String type, String keyword,
         Pageable pageable) {
 
         QSchedule qSchedule = schedule;
@@ -97,7 +99,7 @@ public class QueryRepositoryImpl implements QueryRepository {
             throw new NotFindFilterException();
         }
 
-        return new PageImpl<>(schedules, pageable, total);
+        return new RestPage<>(new PageImpl<>(schedules, pageable, total));
     }
 
     private BooleanExpression eqType(String type, String keyword) {

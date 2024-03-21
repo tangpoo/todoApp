@@ -8,6 +8,7 @@ import com.sparta.todoapp.entity.Schedule;
 import com.sparta.todoapp.repository.port.QueryRepository;
 import com.sparta.todoapp.service.port.ReplyService;
 import com.sparta.todoapp.service.port.ScheduleService;
+import com.sparta.todoapp.util.RestPage;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,12 +40,12 @@ public class ScheduleFacadeImpl implements ScheduleFacade {
     }
 
     @Override
-    public Page<ScheduleResponseDto> getSchedules(Member member, Pageable pageable) {
+    public RestPage<ScheduleResponseDto> getSchedules(Member member, Pageable pageable) {
         return queryRepository.getSchedules(member, pageable);
     }
 
     @Override
-    public Page<ScheduleResponseDto> getSearchSchedule(Member member, String type, String keyword,
+    public RestPage<ScheduleResponseDto> getSearchSchedule(Member member, String type, String keyword,
         Pageable pageable) {
         return queryRepository.getSearchSchedule(member, type, keyword, pageable);
     }
